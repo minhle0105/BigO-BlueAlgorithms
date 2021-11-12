@@ -21,7 +21,6 @@ public class ArraysQuestion {
                 subList2.add(nums2.get(i));
             }
         }
-        System.out.println("DONe");
         int r1 = subList1.get(subList1.size() - 1);
         int r2 = subList2.get(subList2.size() - 1);
         return  r1 < r2;
