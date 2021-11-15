@@ -10,8 +10,11 @@ public class Wrath {
         List<Integer> isKilled = new ArrayList<>();
         while (firstPointer >= 0) {
             int secondPointer = firstPointer - 1;
-
             while (secondPointer >= 0) {
+                if (isKilled.contains(secondPointer)) {
+                    secondPointer --;
+                    continue;
+                }
                 int j = secondPointer + 1;
                 int i = firstPointer + 1;
                 int Li = list.get(firstPointer);
@@ -21,6 +24,9 @@ public class Wrath {
                     if (!isKilled.contains(secondPointer)) {
                         isKilled.add(secondPointer);
                     }
+                }
+                if (!canKill2) {
+                    break;
                 }
                 secondPointer--;
             }
