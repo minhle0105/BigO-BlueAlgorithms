@@ -9,7 +9,7 @@ public class Wrath {
     private static int solution(List<Integer> list) {
         int firstPointer = list.size() - 1;
         int secondPointer = firstPointer - 1;
-        Hashtable<Integer, Integer> isKilled = new Hashtable<>();
+        List<Integer> isKilled = new ArrayList<>();
         while (firstPointer >= 0) {
             while (secondPointer >= 0) {
                 int j = secondPointer + 1;
@@ -18,7 +18,7 @@ public class Wrath {
                 boolean canKill1 = j < i;
                 boolean canKill2 = j >= i - Li;
                 if (canKill1 && canKill2) {
-                    isKilled.put(secondPointer, 1);
+                    isKilled.add(secondPointer);
                 }
                 if (!canKill2) {
                     break;
