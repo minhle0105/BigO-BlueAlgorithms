@@ -6,18 +6,8 @@ import java.util.Scanner;
 
 public class ConstantRange {
 
-    private static int findMax(List<Integer> nums) {
-        int maxVal = nums.get(0);
-        for (Integer i : nums) {
-            if (i > maxVal) {
-                maxVal = i;
-            }
-        }
-        return maxVal;
-    }
-
     private static int solution (List<Integer> list) {
-        List<Integer> maxCanGoFromHere = new ArrayList<>();
+        int maxCanGo = 0;
         int minValInRange;
         int maxValInRange;
         int distance;
@@ -33,18 +23,22 @@ public class ConstantRange {
                     minValInRange = list.get(j);
                 }
                 if (maxValInRange - minValInRange > 1) {
-                    maxCanGoFromHere.add(distance);
+                    if (distance > maxCanGo) {
+                        maxCanGo = distance;
+                    }
                     break;
                 }
                 else {
                     distance++;
                 }
                 if (j == list.size() - 1) {
-                    maxCanGoFromHere.add(distance);
+                    if (distance > maxCanGo) {
+                        maxCanGo = distance;
+                    }
                 }
             }
         }
-        return findMax(maxCanGoFromHere);
+        return maxCanGo;
     }
 
     public static void main(String[] args) {
