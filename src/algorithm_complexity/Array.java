@@ -3,45 +3,31 @@ package algorithm_complexity;
 import java.util.*;
 
 public class Array {
-    // 4 2
-    // 1 2 2 3 -> 1 2
-
-    // 8 3
-    // 1 1 2 2 3 3 4 5 -> 2 5
-
-    // 7 4
-    // 4 7 7 4 7 4 7
-
-    private static int containsKElement(List<Integer> list) {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (Integer i : list) {
-            hashMap.put(i, hashMap.getOrDefault(i, 1));
-        }
-        return hashMap.size();
-    }
-// 1 2 2 3      2
     private static int[] solution(List<Integer> list, int k) {
 
         int[] result = new int[]{-1, -1};
-        int firstPointer = 0;
-        int secondPointer = firstPointer + k - 1;
-        while (firstPointer < list.size() - k + 1) {
-            List<Integer> range = list.subList(firstPointer, secondPointer);
-            int numberOfDistinctElements = containsKElement(range);
-            if (numberOfDistinctElements < k) {
+        int firstPointer;
+        int secondPointer;
+        int maxLength = list.size();
+
+        HashMap<Integer, Integer> hashMap;
+
+        for (firstPointer = 0; firstPointer < list.size(); firstPointer++) {
+            hashMap = new HashMap<>();
+            hashMap.put(list.get(firstPointer), 1);
+            secondPointer = firstPointer + 1;
+            while (secondPointer < list.size() - k + 1) {
+                if (!hashMap.containsKey(list.get(secondPointer))) {
+                    hashMap.put(list.get(secondPointer), 1);
+                }
+                if (hashMap.size() == k) {
+                    if (secondPointer - firstPointer < maxLength) {
+                        result[0] = firstPointer + 1;
+                        result[1] = secondPointer + 1;
+                    }
+                    break;
+                }
                 secondPointer++;
-            }
-            else if (numberOfDistinctElements > k) {
-                firstPointer++;
-            }
-            else {
-                result[0] = firstPointer + 1;
-                result[1] = secondPointer;
-                firstPointer++;
-            }
-            if (secondPointer == list.size()) {
-                firstPointer++;
-                secondPointer = firstPointer + k - 1;
             }
         }
         return result;
@@ -52,7 +38,7 @@ public class Array {
         int n = Integer.parseInt(sc.next());
         int k = Integer.parseInt(sc.next());
         List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < n; i ++) {
+        for (int i = 0; i < n; i++) {
             list.add(Integer.parseInt(sc.next()));
         }
         int[] result = solution(list, k);
