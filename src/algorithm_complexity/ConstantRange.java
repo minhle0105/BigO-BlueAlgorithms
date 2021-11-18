@@ -48,7 +48,7 @@ public class ConstantRange {
                 break;
             }
         }
-        return maxCanGo + 1;
+        return maxCanGo;
     }
 
     public static void main(String[] args) {
