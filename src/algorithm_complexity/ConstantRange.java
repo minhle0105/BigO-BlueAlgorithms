@@ -15,39 +15,44 @@ public class ConstantRange {
         HashMap<Integer, Integer> hashSet = new HashMap<>();
         hashSet.put(list.get(firstPointer), 1);
 
-        while (firstPointer < list.size()) {
-            if (hashSet.containsKey(list.get(secondPointer))) {
-                if (hashSet.size() == 1) {
-                    hashSet.put(list.get(secondPointer), 1);
-                }
-                if (secondPointer < list.size() - 1) {
-                    secondPointer++;
-                }
-            }
-            else {
-                if (hashSet.size() == 1) {
-                    hashSet.put(list.get(secondPointer), 1);
-                    secondPointer++;
+        //Loop bên ngoài để đẩy firstPointer từng bước
+        for(firstPointer = 0; firstPointer < list.size(); firstPointer++) {
+
+            // Loop bên trong để đẩy secondPointer đến vị trí lớn nhất mà
+            // đến đó thì không thể thêm phần tử vô được
+
+            while(secondPointer < list.size()) {
+
+                //Cố để thêm phần tử hiện tại
+                if(hashSet.containsKey(list.get(secondPointer))) {
+                    hashSet.put(list.get(secondPointer), hashSet.get(list.get(secondPointer)) + 1);
                 }
                 else {
-                    hashSet.remove(list.get(firstPointer));
                     hashSet.put(list.get(secondPointer), 1);
-                    firstPointer++;
-
-                    while (Math.abs(list.get(firstPointer) - list.get(secondPointer)) > 1) {
-                        hashSet.remove(list.get(firstPointer));
-                        firstPointer++;
-                        hashSet.put(list.get(firstPointer), 1);
-                    }
                 }
+
+                //Nếu thêm vô rồi mà vượt quá 2 phần tử thì bỏ nó
+                if(hashSet.size()==3) {
+                    hashSet.remove(list.get(secondPointer));
+                    break;
+                }
+
+                // Còn không thì cộng lên để vòng lặp sau thêm
+                secondPointer++;
             }
-            if (secondPointer - firstPointer > maxCanGo) {
+            if(secondPointer - firstPointer > maxCanGo) {
                 maxCanGo = secondPointer - firstPointer;
+//        		System.out.println(firstPointer + " " + secondPointer);
             }
-            if (secondPointer == list.size() - 1) {
-                break;
+
+            if(hashSet.get(list.get(firstPointer)) == 1) {
+                hashSet.remove(list.get(firstPointer));
+            }
+            else {
+                hashSet.put(list.get(firstPointer), hashSet.get(list.get(firstPointer)) - 1);
             }
         }
+
         return maxCanGo;
     }
 
