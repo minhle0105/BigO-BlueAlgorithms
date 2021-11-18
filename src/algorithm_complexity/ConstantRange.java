@@ -1,42 +1,70 @@
 package algorithm_complexity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConstantRange {
 
+    private static boolean count(List<Integer> list) {
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        for (Integer i : list) {
+            if (!hashMap.containsKey(i)) {
+                hashMap.put(i, 1);
+            }
+        }
+        return hashMap.size() <= 2;
+    }
+
     private static int solution (List<Integer> list) {
-        int maxCanGo = 0;
-        int minValInRange;
-        int maxValInRange;
-        int distance;
-        for (int i = 0; i < list.size(); i++) {
-            minValInRange = list.get(i);
-            maxValInRange = list.get(i);
-            distance = 1;
-            for (int j = i + 1; j < list.size(); j++) {
-                if (list.get(j) > maxValInRange) {
-                    maxValInRange = list.get(j);
-                }
-                if (list.get(j) < minValInRange) {
-                    minValInRange = list.get(j);
-                }
-                if (maxValInRange - minValInRange > 1) {
-                    if (distance > maxCanGo) {
-                        maxCanGo = distance;
-                    }
-                    break;
+        int maxCanGo = 1;
+        int leftPointer = 0;
+        int rightPointer = 1;
+
+        HashMap<Integer, Integer> range = new HashMap<>();
+        range.put(list.get(leftPointer), 1);
+
+//        int countDistinct = range.size();
+
+        while (leftPointer < list.size()) {
+            if (range.containsKey(list.get(rightPointer))) {
+                range.put(list.get(rightPointer), range.get(list.get(rightPointer)) + 1);
+            }
+            else {
+                range.put(list.get(rightPointer), 1);
+//                countDistinct++;
+            }
+            if (range.size() < 3) {
+                if (rightPointer < list.size()) {
+                    rightPointer++;
                 }
                 else {
-                    distance++;
-                }
-                if (j == list.size() - 1) {
-                    if (distance > maxCanGo) {
-                        maxCanGo = distance;
+                    if (rightPointer - leftPointer > maxCanGo) {
+                        maxCanGo = rightPointer - leftPointer;
                     }
+                    if (range.get(list.get(leftPointer)) == 1) {
+                        range.remove(list.get(leftPointer));
+//                    countDistinct--;
+                    }
+                    else {
+                        range.put(list.get(leftPointer), range.get(list.get(leftPointer)) - 1);
+                    }
+                    leftPointer++;
+
                 }
             }
+            else {
+                if (range.get(list.get(leftPointer)) == 1) {
+                    range.remove(list.get(leftPointer));
+//                    countDistinct--;
+                }
+                else {
+                    range.put(list.get(leftPointer), range.get(list.get(leftPointer)) - 1);
+                }
+                leftPointer++;
+            }
+            // 1 2 3 3 2
+            // 1 -> 1
+            //
+
         }
         return maxCanGo;
     }
