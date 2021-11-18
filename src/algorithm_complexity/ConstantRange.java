@@ -1,72 +1,54 @@
 package algorithm_complexity;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 
 public class ConstantRange {
 
-    private static boolean count(List<Integer> list) {
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (Integer i : list) {
-            if (!hashMap.containsKey(i)) {
-                hashMap.put(i, 1);
-            }
-        }
-        return hashMap.size() <= 2;
-    }
-
     private static int solution (List<Integer> list) {
         int maxCanGo = 1;
-        int leftPointer = 0;
-        int rightPointer = 1;
+        int firstPointer = 0;
+        int secondPointer = 1;
 
-        HashMap<Integer, Integer> range = new HashMap<>();
-        range.put(list.get(leftPointer), 1);
+        HashMap<Integer, Integer> hashSet = new HashMap<>();
+        hashSet.put(list.get(firstPointer), 1);
 
-//        int countDistinct = range.size();
-
-        while (leftPointer < list.size()) {
-            if (range.containsKey(list.get(rightPointer))) {
-                range.put(list.get(rightPointer), range.get(list.get(rightPointer)) + 1);
-            }
-            else {
-                range.put(list.get(rightPointer), 1);
-//                countDistinct++;
-            }
-            if (range.size() < 3) {
-                if (rightPointer < list.size()) {
-                    rightPointer++;
+        while (firstPointer < list.size()) {
+            if (hashSet.containsKey(list.get(secondPointer))) {
+                if (hashSet.size() == 1) {
+                    hashSet.put(list.get(secondPointer), 1);
                 }
-                else {
-                    if (rightPointer - leftPointer > maxCanGo) {
-                        maxCanGo = rightPointer - leftPointer;
-                    }
-                    if (range.get(list.get(leftPointer)) == 1) {
-                        range.remove(list.get(leftPointer));
-//                    countDistinct--;
-                    }
-                    else {
-                        range.put(list.get(leftPointer), range.get(list.get(leftPointer)) - 1);
-                    }
-                    leftPointer++;
-
+                if (secondPointer < list.size() - 1) {
+                    secondPointer++;
                 }
             }
             else {
-                if (range.get(list.get(leftPointer)) == 1) {
-                    range.remove(list.get(leftPointer));
-//                    countDistinct--;
+                if (hashSet.size() == 1) {
+                    hashSet.put(list.get(secondPointer), 1);
+                    secondPointer++;
                 }
                 else {
-                    range.put(list.get(leftPointer), range.get(list.get(leftPointer)) - 1);
-                }
-                leftPointer++;
-            }
-            // 1 2 3 3 2
-            // 1 -> 1
-            //
+                    hashSet.remove(list.get(firstPointer));
+                    hashSet.put(list.get(secondPointer), 1);
+                    firstPointer++;
 
+                    while (Math.abs(list.get(firstPointer) - list.get(secondPointer)) > 1) {
+                        hashSet.remove(list.get(firstPointer));
+                        firstPointer++;
+                        hashSet.put(list.get(firstPointer), 1);
+                    }
+                }
+            }
+            if (secondPointer - firstPointer > maxCanGo) {
+                maxCanGo = secondPointer - firstPointer;
+            }
+            if (secondPointer == list.size() - 1) {
+                break;
+            }
         }
-        return maxCanGo;
+        return maxCanGo + 1;
     }
 
     public static void main(String[] args) {
@@ -78,5 +60,29 @@ public class ConstantRange {
         }
         System.out.println(solution(list));
         sc.close();
+    }
+
+    @Test
+    void test1() {
+        List<Integer> list = Arrays.asList(1,2,3,3,2);
+        int expected = 4;
+        int actual = solution(list);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void test2() {
+        List<Integer> list = Arrays.asList(5,4,5,5,6,7,8,8,8,7,6);
+        int expected = 5;
+        int actual = solution(list);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void test3() {
+        List<Integer> list = Arrays.asList(2,3,3);
+        int expected = 3;
+        int actual = solution(list);
+        Assertions.assertEquals(expected, actual);
     }
 }
