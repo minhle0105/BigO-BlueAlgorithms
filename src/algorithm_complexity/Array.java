@@ -5,31 +5,50 @@ import java.util.*;
 public class Array {
     private static int[] solution(List<Integer> list, int k) {
 
+        if (k == 1) {
+            return new int[]{1,1};
+        }
+
         int[] result = new int[]{-1, -1};
-        int firstPointer;
-        int secondPointer;
+        int firstPointer = -1;
+        int secondPointer = -1;
         int maxLength = list.size();
 
-        HashMap<Integer, Integer> hashMap;
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        hashMap.put(list.get(0), 1);
 
-        for (firstPointer = 0; firstPointer < list.size(); firstPointer++) {
-            hashMap = new HashMap<>();
-            hashMap.put(list.get(firstPointer), 1);
-            secondPointer = firstPointer + 1;
-            while (secondPointer < list.size() - k + 1) {
-                if (!hashMap.containsKey(list.get(secondPointer))) {
-                    hashMap.put(list.get(secondPointer), 1);
-                }
-                if (hashMap.size() == k) {
-                    if (secondPointer - firstPointer < maxLength) {
-                        result[0] = firstPointer + 1;
-                        result[1] = secondPointer + 1;
-                    }
-                    break;
-                }
-                secondPointer++;
+        for (int i = 1; i < list.size(); i++) {
+            if (!hashMap.containsKey(list.get(i))) {
+                hashMap.put(list.get(i), 1);
+            }
+            if (hashMap.size() < k) {
+                hashMap.put(list.get(i), hashMap.get(list.get(i)) + 1);
+            }
+            else {
+                secondPointer = i;
+                break;
             }
         }
+        if (secondPointer == -1) {
+            return new int[] {-1, -1};
+        }
+        hashMap = new HashMap<>();
+        hashMap.put(list.get(secondPointer), 1);
+        for (int i = secondPointer - 1; i >= 0; i--) {
+            if (!hashMap.containsKey(list.get(i))) {
+                hashMap.put(list.get(i), 1);
+            }
+            if (hashMap.size() < k) {
+                hashMap.put(list.get(i), hashMap.get(list.get(i)) + 1);
+            }
+            else {
+                firstPointer = i;
+                break;
+            }
+        }
+        result[0] = firstPointer+1;
+        result[1] = secondPointer + 1;
+
         return result;
     }
 
