@@ -5,7 +5,10 @@ import java.util.*;
 public class Contest {
 
     private static String solution(List<Integer> list) {
+        // dùng để chứa ratings và tần suất sau khi đã sort
         Map<Integer, Integer> map = new LinkedHashMap<>();
+
+        // dùng để keep track index của từng ratings ban đầu
         Map<Integer, List<Integer>> valueToIndex = new HashMap<>();
         for (int i = 0; i < list.size(); i++) {
             if (!valueToIndex.containsKey(list.get(i))) {
@@ -14,9 +17,11 @@ public class Contest {
             valueToIndex.get(list.get(i)).add(i);
         }
 
+        // sort và đảo ngược
         Collections.sort(list);
         Collections.reverse(list);
 
+        // đếm tần suất từng ratings
         for (Integer i : list) {
             if (map.containsKey(i)) {
                 map.put(i, map.get(i) + 1);
@@ -26,6 +31,7 @@ public class Contest {
             }
         }
 
+        // map từng ratings tới rank tương ứng
         int rank = 1;
         Map<Integer, Integer> ratingsToRanking = new HashMap<>();
         for (Integer i : map.keySet()) {
@@ -33,6 +39,7 @@ public class Contest {
             rank += map.get(i);
         }
 
+        // đặt rank của từng ratings vào index tương ứng
         int[] results = new int[list.size()];
         for (Integer i : valueToIndex.keySet()) { // 3 5 3 4 5
             int rankOfThis = ratingsToRanking.get(i);
