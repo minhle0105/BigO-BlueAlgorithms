@@ -3,41 +3,31 @@ package stack_queue;
 import java.util.*;
 
 public class CompilerAndParser {
-    private int length;
+    private static int length;
 
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    private void validR(String originalS, Stack<Character> stack, int endIndex, int pointer) {
-        // nhích lên từng chút tới khi kiểm tra hết chuỗi gốc
-        String s = originalS.substring(0, endIndex);
-        char[] sToChar = s.toCharArray();
+    private static void validR(String originalS, Stack<Character> stack, int endIndex, int pointer) {
 
         // nếu stack trống và kí tự tiếp theo là dấu > thì chắc chắn là dừng vì không có dấu < tương ứng ở trước
-        if (stack.isEmpty() && sToChar[sToChar.length - 1] == '>') {
+        if (stack.isEmpty() && originalS.charAt(pointer) == '>') {
             return;
         }
 
-        // chỉ đi từ pointer, tiếp tục nhét vào stack để kiểm tra
-        for (int i = pointer; i < s.length(); i++) {
-            if (sToChar[i] == '<') {
-                stack.push(sToChar[i]);
-            }
-            else if ((!stack.isEmpty()) && (sToChar[i] == '>' && stack.peek() == '<')) {
-                stack.pop();
-            }
-            else {
-                stack.push(sToChar[i]);
-            }
+        if (originalS.charAt(pointer) == '<') {
+            stack.push(originalS.charAt(pointer));
+        }
+        else if ((!stack.isEmpty()) && (originalS.charAt(pointer) == '>' && stack.peek() == '<')) {
+            stack.pop();
+        }
+        else {
+            stack.push(originalS.charAt(pointer));
         }
 
         // nếu stack trống thì chuỗi đang xử lý là ok, cập nhật length
         if (stack.isEmpty()) {
-            length = s.length();
+            length = pointer +1;
         }
         // nếu đã xử lý hết chuỗi thì dừng đệ quy
-        if (s.length() == originalS.length()) {
+        if (pointer == originalS.length() - 1) {
             return;
         }
         // nếu không thì tiếp tục đệ quy, đẩy pointer lên 1
@@ -46,7 +36,7 @@ public class CompilerAndParser {
         }
     }
 
-    private int solution(String s) {
+    private static int solution(String s) {
         if (s.toCharArray()[0] == '>') {
             return 0;
         }
@@ -56,7 +46,6 @@ public class CompilerAndParser {
     }
 
     public static void main(String[] args) {
-        CompilerAndParser compilerAndParser = new CompilerAndParser();
         Scanner sc = new Scanner(System.in);
         int n = Integer.parseInt(sc.next());
         List<String> list = new ArrayList<>();
@@ -64,8 +53,8 @@ public class CompilerAndParser {
             list.add(sc.next());
         }
         for (String s : list) {
-            compilerAndParser.setLength(0);
-            System.out.println(compilerAndParser.solution(s));
+            length = 0;
+            System.out.println(solution(s));
         }
         sc.close();
     }
