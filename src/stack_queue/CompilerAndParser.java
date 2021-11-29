@@ -12,12 +12,15 @@ public class CompilerAndParser {
             return;
         }
 
+        // nếu kí tự tiếp theo trong chuỗi là dấu mở ngoặc thì nhét vào stack
         if (originalS.charAt(pointer) == '<') {
             stack.push(originalS.charAt(pointer));
         }
+        // nếu là dấu đóng ngoặc và top của stack là dấu mở thì là 1 cặp trùng nhau, nên pop ra
         else if ((!stack.isEmpty()) && (originalS.charAt(pointer) == '>' && stack.peek() == '<')) {
             stack.pop();
         }
+        // nếu không thì đẩy vào stack
         else {
             stack.push(originalS.charAt(pointer));
         }
