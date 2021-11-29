@@ -9,28 +9,40 @@ public class CompilerAndParser {
         this.length = length;
     }
 
-    private void validR(String s) {
-        if (s.length() <= 1) {
-            this.length = 0;
+    private void validR(String originalS, Stack<Character> stack, int endIndex, int pointer) {
+        // nhích lên từng chút tới khi kiểm tra hết chuỗi gốc
+        String s = originalS.substring(0, endIndex);
+        char[] sToChar = s.toCharArray();
+
+        // nếu stack trống và kí tự tiếp theo là dấu > thì chắc chắn là dừng vì không có dấu < tương ứng ở trước
+        if (stack.isEmpty() && sToChar[sToChar.length - 1] == '>') {
             return;
         }
-        Stack<Character> stack = new Stack<>();
-        for (char c : s.toCharArray()) {
-            if (c == '<') {
-                stack.push(c);
+
+        // chỉ đi từ pointer, tiếp tục nhét vào stack để kiểm tra
+        for (int i = pointer; i < s.length(); i++) {
+            if (sToChar[i] == '<') {
+                stack.push(sToChar[i]);
             }
-            else if ((!stack.isEmpty()) && (c == '>' && stack.peek() == '<')) {
+            else if ((!stack.isEmpty()) && (sToChar[i] == '>' && stack.peek() == '<')) {
                 stack.pop();
             }
             else {
-                stack.push(c);
+                stack.push(sToChar[i]);
             }
         }
+
+        // nếu stack trống thì chuỗi đang xử lý là ok, cập nhật length
         if (stack.isEmpty()) {
             length = s.length();
         }
+        // nếu đã xử lý hết chuỗi thì dừng đệ quy
+        if (s.length() == originalS.length()) {
+            return;
+        }
+        // nếu không thì tiếp tục đệ quy, đẩy pointer lên 1
         else {
-            validR(s.substring(0, s.length() - 1));
+            validR(originalS, stack,endIndex+1, pointer+1);
         }
     }
 
@@ -38,9 +50,10 @@ public class CompilerAndParser {
         if (s.toCharArray()[0] == '>') {
             return 0;
         }
-        validR(s);
+        int endIndex = 1;
+        validR(s, new Stack<>(), endIndex, 0);
         return length;
-    }// <<><<>><<
+    }
 
     public static void main(String[] args) {
         CompilerAndParser compilerAndParser = new CompilerAndParser();
