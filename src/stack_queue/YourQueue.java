@@ -4,23 +4,20 @@ import java.util.*;
 
 public class YourQueue {
     private static void solution(List<String> information, int numberOfQueries, int numberOfPatients) {
-        LinkedList<Long> patients = new LinkedList<>();
-        for (long i = 1; i <= numberOfPatients; i++) {
-            patients.add(i);
-        }
+        int firstPatient = 1;
         int query = 0;
         while (query < numberOfQueries) {
             for (String s : information) {
                 if (s.equals("N")) {
-                    Long firstPatient = patients.remove();
-                    patients.add(firstPatient);
-                    System.out.println(firstPatient);
+                    System.out.println(firstPatient++);
                 }
                 else if (s.charAt(0) == 'E') {
                     String patientToBePrioritizedString = s.substring(2);
                     Long patientToBePrioritized = Long.parseLong(patientToBePrioritizedString);
-                    patients.remove(patientToBePrioritized);
-                    patients.add(0, patientToBePrioritized);
+                    System.out.println(patientToBePrioritized);
+                }
+                if (firstPatient == numberOfPatients + 1) {
+                    firstPatient = 1;
                 }
                 query++;
             }
