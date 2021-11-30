@@ -4,23 +4,23 @@ import java.util.*;
 
 public class YourQueue {
     private static void solution(List<String> information, int numberOfQueries, int numberOfPatients) {
-        Queue<Long> patients = new LinkedList<>();
-        for (long i = 1; i <= numberOfPatients; i++) {
+        Queue<Integer> patients = new LinkedList<>();
+        for (int i = 1; i <= numberOfPatients; i++) {
             patients.add(i);
         }
-        List<Long> orders = new ArrayList<>();
+        List<Integer> orders = new ArrayList<>();
         int query = 0;
         while (query < numberOfQueries) {
             for (String s : information) {
                 if (s.equals("N")) {
-                    Long firstPatient = patients.remove();
+                    Integer firstPatient = patients.remove();
                     patients.add(firstPatient);
                     orders.add(firstPatient);
                 }
                 else if (s.charAt(0) == 'E') {
                     String patientToBePrioritizedString = s.substring(2);
-                    Long patientToBePrioritized = Long.parseLong(patientToBePrioritizedString);
-                    Queue<Long> backup = new LinkedList<>();
+                    Integer patientToBePrioritized = Integer.parseInt(patientToBePrioritizedString);
+                    Queue<Integer> backup = new LinkedList<>();
                     while (!patients.isEmpty() && !patients.peek().equals(patientToBePrioritized)) {
                         backup.add(patients.remove());
                     }
@@ -36,7 +36,7 @@ public class YourQueue {
                 query++;
             }
         }
-        for (Long i : orders) {
+        for (Integer i : orders) {
             System.out.println(i);
         }
 
@@ -61,8 +61,6 @@ public class YourQueue {
             solution(information, numberOfQueries, n);
             caseCount++;
         }
-        int l = 1000000000;
-        System.out.println(l);
 
         sc.close();
     }
