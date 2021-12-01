@@ -35,7 +35,6 @@ public class FerryLoading {
 
     private static void solution(List<Car> cars, int numberOfCarsOnFerry, int minutes) {
         List<Integer> result = new ArrayList<>();
-        int currentTime = 0;
         boolean ferryOnTheLeft = true;
         Queue<Car> carsOnTheLeft = new LinkedList<>();
         Queue<Car> carsOnTheRight = new LinkedList<>();
@@ -48,86 +47,62 @@ public class FerryLoading {
             }
         }
         int count = 0;
+
+        Car carToBeMovedFirst;
+        if (!carsOnTheLeft.isEmpty() && !carsOnTheRight.isEmpty()) {
+            carToBeMovedFirst = carsOnTheLeft.peek().getTimeOfArrival() < carsOnTheRight.peek().getTimeOfArrival() ?
+                    carsOnTheLeft.peek() : carsOnTheRight.peek();
+        }
+        else if (carsOnTheLeft.isEmpty()) {
+            carToBeMovedFirst = carsOnTheRight.peek();
+        }
+        else {
+            carToBeMovedFirst = carsOnTheLeft.peek();
+        }
+
+        String firstSide = carToBeMovedFirst.getSide();
+        int currentTime = carToBeMovedFirst.getTimeOfArrival();
+
         while (count < cars.size()) {
-            String side = "";
-            if (!carsOnTheLeft.isEmpty() && !carsOnTheRight.isEmpty()) {
-                side = carsOnTheLeft.peek().getTimeOfArrival() < carsOnTheRight.peek().getTimeOfArrival() ?
-                        carsOnTheLeft.peek().getSide() : carsOnTheRight.peek().getSide();
-                currentTime = Math.max(currentTime, Math.min(carsOnTheLeft.peek().getTimeOfArrival(), carsOnTheRight.peek().getTimeOfArrival()));
+            Car nextCarToBeMoved;
+
+            if (carsOnTheLeft.isEmpty()) {
+                nextCarToBeMoved = carsOnTheRight.remove();
             }
-            else if (carsOnTheLeft.isEmpty()) {
-                side = "right";
-                currentTime = Math.max(currentTime, carsOnTheRight.peek().getTimeOfArrival());
+
+            else if (carsOnTheRight.isEmpty()) {
+                nextCarToBeMoved = carsOnTheLeft.remove();
+            }
+
+            else {
+                nextCarToBeMoved = carsOnTheLeft.peek().getTimeOfArrival() < carsOnTheRight.peek().getTimeOfArrival() ?
+                        carsOnTheLeft.remove() : carsOnTheRight.remove();
+            }
+
+            if (ferryOnTheLeft) {
+                if (nextCarToBeMoved.getSide().equals("left")) {
+                    result.add(Math.max(currentTime, nextCarToBeMoved.getTimeOfArrival()) + minutes);
+                }
+                else {
+                    currentTime = currentTime + minutes;
+                    result.add(Math.max(currentTime, nextCarToBeMoved.getTimeOfArrival()) + minutes);
+                }
+                ferryOnTheLeft = false;
             }
             else {
-                side = "left";
-                currentTime = Math.max(currentTime, carsOnTheLeft.peek().getTimeOfArrival());
-            }
-            if (side.equals("left") && ferryOnTheLeft) {
-                ferryOnTheLeft = false;
-                int carsOnFerry = 0;
-                while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
-                    if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
-                        Car carMoved = carsOnTheLeft.remove();
-                        result.add(currentTime + minutes);
-                        currentTime = currentTime + minutes;
-                        carsOnFerry++;
-                    }
-                    else {
-                        break;
-                    }
+                if (nextCarToBeMoved.getSide().equals("right")) {
+                    result.add(Math.max(currentTime, nextCarToBeMoved.getTimeOfArrival()) + minutes);
                 }
-//                currentTime += minutes;
-            }
-            else if (side.equals("right") && ferryOnTheLeft) {
-                int carsOnFerry = 0;
-                while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
-                    if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
-                        Car carMoved = carsOnTheRight.remove();
-                        result.add(minutes + currentTime + minutes);
-                        carsOnFerry++;
-                        currentTime = minutes + currentTime + minutes;
-                    }
-                    else {
-                        break;
-                    }
+                else {
+                    currentTime = currentTime + minutes;
+                    result.add(Math.max(currentTime, nextCarToBeMoved.getTimeOfArrival()) + minutes * 2);
                 }
-//                currentTime += minutes;
-            }
-            else if (side.equals("left") && !ferryOnTheLeft) {
-                ferryOnTheLeft = true;
-                int carsOnFerry = 0;
-                while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
-                    if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
-                        Car carMoved = carsOnTheLeft.remove();
-                        result.add(minutes + currentTime + minutes);
-                        carsOnFerry++;
-                        currentTime = minutes + currentTime + minutes;
-                    }
-                    else {
-                        break;
-                    }
-                }
-//                currentTime += minutes;
-            }
-            else if (side.equals("right") && !ferryOnTheLeft) {
-                ferryOnTheLeft = true;
-                int carsOnFerry = 0;
-                while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
-                    if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
-                        Car carMoved = carsOnTheRight.remove();
-                        result.add(minutes + currentTime + minutes);
-                        carsOnFerry++;
-                        currentTime = minutes + currentTime + minutes;
-                    }
-                    else {
-                        break;
-                    }
-                }
-//                currentTime += minutes;
+                ferryOnTheLeft = !ferryOnTheLeft;
             }
             count++;
+
         }
+
         for (Integer i : result) {
             System.out.println(i);
         }
