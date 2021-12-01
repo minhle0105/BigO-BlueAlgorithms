@@ -5,7 +5,7 @@ import java.util.*;
 public class YourQueue {
     private static void solution(List<String> information, int numberOfQueries, int numberOfPatients) {
         Queue<Integer> patients = new LinkedList<>();
-        for (int i = 1; i <= numberOfPatients; i++) {
+        for (int i = 1; i <= Math.min(numberOfPatients, numberOfQueries); i++) {
             patients.add(i);
         }
 
@@ -18,8 +18,11 @@ public class YourQueue {
                     System.out.println(firstPatient);
                 }
                 else if (s.charAt(0) == 'E') {
-                    Integer patientToBePrioritized = Integer.parseInt(String.valueOf(s.charAt(2)));
+                    Integer patientToBePrioritized = Integer.parseInt(s.substring(2));
                     Queue<Integer> backup = new LinkedList<>();
+                    if (patientToBePrioritized > numberOfQueries) {
+                        patients.add(patientToBePrioritized);
+                    }
                     while (!patients.isEmpty() && !patients.peek().equals(patientToBePrioritized)) {
                         backup.add(patients.remove());
                     }
