@@ -3,10 +3,16 @@ package stack_queue;
 import java.util.*;
 
 class Car {
+    private int id;
     private final int timeOfArrival;
     private final String side;
 
-    public Car(int timeOfArrival, String side) {
+    public int getId() {
+        return id;
+    }
+
+    public Car(int id , int timeOfArrival, String side) {
+        this.id = id;
         this.timeOfArrival = timeOfArrival;
         this.side = side;
     }
@@ -25,6 +31,9 @@ public class FerryLoading {
 
     private static List<Integer> solution(List<Car> cars, int numberOfCarsOnFerry, int minutes) {
         List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < cars.size(); i++) {
+            result.add(-1);
+        }
         int currentTime = 0;
         boolean ferryOnTheLeft = true;
         Queue<Car> carsOnTheLeft = new LinkedList<>();
@@ -64,7 +73,7 @@ public class FerryLoading {
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
                         if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheLeft.remove();
-                            result.add(currentTime + minutes);
+                            result.set(carMoved.getId(), currentTime + minutes);
                             carsOnFerry++;
                         }
                         else {
@@ -80,7 +89,7 @@ public class FerryLoading {
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
                         if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheLeft.remove();
-                            result.add(minutes + currentTime);
+                            result.set(carMoved.getId() ,minutes + currentTime);
                             carsOnFerry++;
                         }
                         else {
@@ -99,7 +108,7 @@ public class FerryLoading {
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
                         if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheRight.remove();
-                            result.add(minutes + currentTime);
+                            result.set(carMoved.getId(), minutes + currentTime);
                             carsOnFerry++;
                         }
                         else {
@@ -114,7 +123,7 @@ public class FerryLoading {
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
                         if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheRight.remove();
-                            result.add(currentTime + minutes);
+                            result.set(carMoved.getId(), currentTime + minutes);
                             carsOnFerry++;
                         }
                         else {
@@ -152,7 +161,7 @@ public class FerryLoading {
             for (int i = 0; i < numberOfCars; i++) {
                 int time = Integer.parseInt(sc.next());
                 String side = sc.next();
-                Car car = new Car(time, side);
+                Car car = new Car(i, time, side);
                 cars.add(car);
             }
             List<Integer> result = solution(cars, n, minutes);
