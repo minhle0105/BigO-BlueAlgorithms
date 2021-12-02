@@ -81,11 +81,11 @@ public class FerryLoading {
                     currentTime += minutes;
                 }
                 else {
-                    ferryOnTheLeft = true;
+                    currentTime += minutes;
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
                         if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheLeft.remove();
-                            result.add(minutes + currentTime + minutes);
+                            result.add(minutes + currentTime);
                             carsOnFerry++;
                         }
                         else {
@@ -98,17 +98,18 @@ public class FerryLoading {
 
             else {
                 if (ferryOnTheLeft) {
+                    currentTime += minutes;
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
                         if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheRight.remove();
-                            result.add(minutes + currentTime + minutes);
+                            result.add(minutes + currentTime);
                             carsOnFerry++;
                         }
                         else {
                             break;
                         }
                     }
-                    currentTime += minutes * 2;
+                    currentTime += minutes;
                 }
                 else {
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
