@@ -121,7 +121,7 @@ public class FerryLoading {
                             break;
                         }
                     }
-                    currentTime += minutes * 2;
+                    currentTime += minutes;
                     ferryOnTheLeft = true;
                 }
             }
@@ -173,6 +173,20 @@ public class FerryLoading {
 //200
 //300
 //400
+//500
 //600
 //700
 //900
+//900
+//1100
+//1200
+//1300
+//1500
+//1600
+//1800
+//1900
+//2000
+//2200
+//2400
+//2600
+//2700
