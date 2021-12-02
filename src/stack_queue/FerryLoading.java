@@ -33,7 +33,7 @@ class Car {
 
 public class FerryLoading {
 
-    private static void solution(List<Car> cars, int numberOfCarsOnFerry, int minutes) {
+    private static List<Integer> solution(List<Car> cars, int numberOfCarsOnFerry, int minutes) {
         List<Integer> result = new ArrayList<>();
         int currentTime = 0;
         boolean ferryOnTheLeft = true;
@@ -63,11 +63,11 @@ public class FerryLoading {
                 side = "left";
                 currentTime = Math.max(currentTime, carsOnTheLeft.peek().getTimeOfArrival());
             }
+            int carsOnFerry = 0;
 
             if (side.equals("left")) {
                 if (ferryOnTheLeft) {
                     ferryOnTheLeft = false;
-                    int carsOnFerry = 0;
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
                         if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheLeft.remove();
@@ -82,7 +82,6 @@ public class FerryLoading {
                 }
                 else {
                     ferryOnTheLeft = true;
-                    int carsOnFerry = 0;
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
                         if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheLeft.remove();
@@ -99,7 +98,6 @@ public class FerryLoading {
 
             else {
                 if (ferryOnTheLeft) {
-                    int carsOnFerry = 0;
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
                         if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheRight.remove();
@@ -110,45 +108,71 @@ public class FerryLoading {
                             break;
                         }
                     }
-                    currentTime += minutes;
+                    currentTime += minutes * 2;
                 }
                 else {
-                    ferryOnTheLeft = true;
-                    int carsOnFerry = 0;
                     while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
                         if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
                             Car carMoved = carsOnTheRight.remove();
-                            result.add(minutes + currentTime + minutes);
+                            result.add(currentTime + minutes);
                             carsOnFerry++;
                         }
                         else {
                             break;
                         }
                     }
-                    currentTime += minutes;
+                    currentTime += minutes * 2;
+                    ferryOnTheLeft = true;
                 }
             }
 
-            count++;
+            count += carsOnFerry;
         }
+        return result;
+    }
+
+    private static void print(List<Integer> result, int count, int limit) {
         for (Integer i : result) {
             System.out.println(i);
+        }
+        if (count < limit) {
+            System.out.println();
         }
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int n = Integer.parseInt(sc.next());
-        int minutes = Integer.parseInt(sc.next());
-        int numberOfCars = Integer.parseInt(sc.next());
-        List<Car> cars = new ArrayList<>();
-        for (int i = 0; i < numberOfCars; i++) {
-            int time = Integer.parseInt(sc.next());
-            String side = sc.next();
-            Car car = new Car(time, side);
-            cars.add(car);
+        int numberOfTest = Integer.parseInt(sc.next());
+        List<List<Integer>> results = new ArrayList<>();
+        for (int test = 0; test < numberOfTest; test++) {
+            int n = Integer.parseInt(sc.next());
+            int minutes = Integer.parseInt(sc.next());
+            int numberOfCars = Integer.parseInt(sc.next());
+            List<Car> cars = new ArrayList<>();
+            for (int i = 0; i < numberOfCars; i++) {
+                int time = Integer.parseInt(sc.next());
+                String side = sc.next();
+                Car car = new Car(time, side);
+                cars.add(car);
+            }
+            List<Integer> result = solution(cars, n, minutes);
+            results.add(result);
         }
-        solution(cars, n, minutes);
+
+        int limit = results.size();
+        int count = 1;
+
+        for (List<Integer> result : results) {
+            print(result, count, limit);
+            count += 1;
+        }
         sc.close();
     }
 }
+
+//200
+//300
+//400
+//600
+//700
+//900
