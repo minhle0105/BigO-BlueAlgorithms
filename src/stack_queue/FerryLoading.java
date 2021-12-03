@@ -3,7 +3,7 @@ package stack_queue;
 import java.util.*;
 
 class Car {
-    private int id;
+    private final int id;
     private final int timeOfArrival;
     private final String side;
 
@@ -38,6 +38,7 @@ public class FerryLoading {
         boolean ferryOnTheLeft = true;
         Queue<Car> carsOnTheLeft = new LinkedList<>();
         Queue<Car> carsOnTheRight = new LinkedList<>();
+
         for (Car car : cars) {
             if (car.getSide().equals("left")) {
                 carsOnTheLeft.add(car);
@@ -46,93 +47,56 @@ public class FerryLoading {
                 carsOnTheRight.add(car);
             }
         }
+        String side = "left";
         int count = 0;
         while (count < cars.size()) {
             // kiểm tra xe tiếp theo cần chuyển nằm ở bờ nào, cập nhật thời gian bắt đầu tính
-            String side = "";
+
             if (!carsOnTheLeft.isEmpty() && !carsOnTheRight.isEmpty()) {
-                side = carsOnTheLeft.peek().getTimeOfArrival() < carsOnTheRight.peek().getTimeOfArrival() ?
-                        carsOnTheLeft.peek().getSide() : carsOnTheRight.peek().getSide();
+//                side = carsOnTheLeft.peek().getTimeOfArrival() < carsOnTheRight.peek().getTimeOfArrival() ?
+//                        carsOnTheLeft.peek().getSide() : carsOnTheRight.peek().getSide();
                 currentTime = Math.max(currentTime, Math.min(carsOnTheLeft.peek().getTimeOfArrival(), carsOnTheRight.peek().getTimeOfArrival()));
             }
             else if (carsOnTheLeft.isEmpty()) {
-                side = "right";
+                //side = "right";
                 currentTime = Math.max(currentTime, carsOnTheRight.peek().getTimeOfArrival());
             }
             else {
-                side = "left";
+                //side = "left";
                 currentTime = Math.max(currentTime, carsOnTheLeft.peek().getTimeOfArrival());
             }
+
+            // Ý tưởng: Nếu xe đang bờ trái thì cứ lấy càng nhiều càng tốt xong chở
+            // qua phải, còn xe ở phait thì ngược
             int carsOnFerry = 0;
-
-            // nếu cần chuyển từ bờ trái qua bờ phải
-            if (side.equals("left")) {
-                if (ferryOnTheLeft) {
-                    // nếu phà đang ở bên trái thì đổi biến thành false, tức là sau lần này phà đã sang phải
-                    // vì cùng hướng nên chỉ add currentTime + minutes (là thời gian sang sông)
-                    while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
-                        if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
-                            Car carMoved = carsOnTheLeft.remove();
-                            result.set(carMoved.getId(), currentTime + minutes);
-                            carsOnFerry++;
-                        }
-                        else {
-                            break;
-                        }
+            if(side.equals("left")) {
+                while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
+                    if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
+                        Car carMoved = carsOnTheLeft.remove();
+                        result.set(carMoved.getId(), currentTime + minutes);
+                        carsOnFerry++;
                     }
-                    currentTime += minutes;
-                    ferryOnTheLeft = false;
-                }
-                else {
-                    // nếu phà đang bên phải thì phải + minutes để phà qua bờ trái chuyển xe
-                    currentTime += minutes;
-                    while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheLeft.isEmpty()) {
-                        if (carsOnTheLeft.peek().getTimeOfArrival() <= currentTime) {
-                            Car carMoved = carsOnTheLeft.remove();
-                            result.set(carMoved.getId() ,minutes + currentTime);
-                            carsOnFerry++;
-                        }
-                        else {
-                            break;
-                        }
+                    else {
+                        break;
                     }
-                    currentTime += minutes;
                 }
+                currentTime += minutes;
+                side = "right";
             }
-
             else {
-                // nếu xe cần chuyển ở bên phải
-                if (ferryOnTheLeft) {
-                    // nếu phà đang bên trái thì cần thời gian minutes để phà qua bờ trái đón xe
-                    currentTime += minutes;
-                    while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
-                        if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
-                            Car carMoved = carsOnTheRight.remove();
-                            result.set(carMoved.getId(), minutes + currentTime);
-                            carsOnFerry++;
-                        }
-                        else {
-                            break;
-                        }
+                while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
+                    if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
+                        Car carMoved = carsOnTheRight.remove();
+                        result.set(carMoved.getId(), minutes + currentTime);
+                        carsOnFerry++;
                     }
-                    currentTime += minutes;
-                }
-                else {
-                    // nếu phà đang ở bên phải sẵn rồi thì không cần mất thời gian qua bờ nữa, sau lần này đổi
-                    // biến boolean thành true biểu thị phà đã sang trái
-                    while (carsOnFerry < numberOfCarsOnFerry && !carsOnTheRight.isEmpty()) {
-                        if (carsOnTheRight.peek().getTimeOfArrival() <= currentTime) {
-                            Car carMoved = carsOnTheRight.remove();
-                            result.set(carMoved.getId(), currentTime + minutes);
-                            carsOnFerry++;
-                        }
-                        else {
-                            break;
-                        }
+                    else {
+                        break;
                     }
-                    currentTime += minutes;
-                    ferryOnTheLeft = true;
                 }
+
+                currentTime += minutes;
+                side = "left";
             }
 
             count += carsOnFerry;
@@ -178,24 +142,3 @@ public class FerryLoading {
         sc.close();
     }
 }
-
-//200
-//300
-//400
-//500
-//600
-//700
-//900
-//900
-//1100
-//1200
-//1300
-//1500
-//1600
-//1800
-//1900
-//2000
-//2200
-//2400
-//2600
-//2700
