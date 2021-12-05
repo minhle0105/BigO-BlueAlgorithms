@@ -55,7 +55,6 @@ public class ShortestReach {
     }
 
     public static void main(String[] args) {
-        List<List<Integer>> info = new ArrayList<>();
         Scanner sc = new Scanner(System.in);
         int numberOfTest = Integer.parseInt(sc.next());
         for (int test = 0; test < numberOfTest; test++) {
