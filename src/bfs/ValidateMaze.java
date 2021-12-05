@@ -1,15 +1,10 @@
 package bfs;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
-class Point {
-    private int x;
-    private int y;
-
-    public Point() {
-    }
+class Point{
+    private final int x;
+    private final int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -20,27 +15,19 @@ class Point {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public boolean checkPointsEqual(Point secondPoint) {
+        return this.getX() == secondPoint.getX() && this.getY() == secondPoint.getY();
     }
 }
 
 public class ValidateMaze {
-    private static int V;
-    private static int E;
-    private static List<Integer> path;
-    private static List<Boolean> visited;
 
-    private static List<List<Integer>> hasEnterAndExit(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
-        List<List<Integer>> endPoints = new ArrayList<>();
+    private static List<Point> hasEnterAndExit(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
+        List<Point> endPoints = new ArrayList<>();
         List<Character> firstRow = maze.get(0);
         List<Character> lastRow = maze.get(numberOfRows - 1);
         List<Character> firstColumn = new ArrayList<>();
@@ -50,51 +37,68 @@ public class ValidateMaze {
             lastColumn.add(row.get(row.size() - 1));
         }
 
-        for (Character c : firstRow) {
-            if (c == '.') {
-                List<Integer> thisPoint = new ArrayList<>();
-                thisPoint.add(0);
-                thisPoint.add(firstRow.indexOf(c));
-                endPoints.add(thisPoint);
-            }
-            if (endPoints.size() == 2) {
-                return endPoints;
-            }
-        }
-
-        for (Character c : lastRow) {
-            if (c == '.') {
-                List<Integer> thisPoint = new ArrayList<>();
-                thisPoint.add(numberOfRows - 1);
-                thisPoint.add(lastRow.indexOf(c));
-                endPoints.add(thisPoint);
-            }
-            if (endPoints.size() == 2) {
-                return endPoints;
+        for (int i = 0; i < firstRow.size(); i++) {
+            if (firstRow.get(i) == '.') {
+                boolean hasBeenRecognized = false;
+                Point point = new Point(0, i);
+                for (Point p : endPoints) {
+                    if (p.checkPointsEqual(point)) {
+                        hasBeenRecognized = true;
+                        break;
+                    }
+                }
+                if (!hasBeenRecognized) {
+                    endPoints.add(point);
+                }
             }
         }
 
-        for (Character c : firstColumn) {
-            if (c == '.') {
-                List<Integer> thisPoint = new ArrayList<>();
-                thisPoint.add(firstColumn.indexOf(c));
-                thisPoint.add(numberOfColumns - 1);
-                endPoints.add(thisPoint);
-            }
-            if (endPoints.size() == 2) {
-                return endPoints;
+        for (int i = 0; i < lastRow.size(); i++) {
+            if (lastRow.get(i) == '.') {
+                boolean hasBeenRecognized = false;
+                Point point = new Point(numberOfRows - 1, i);
+                for (Point p : endPoints) {
+                    if (p.checkPointsEqual(point)) {
+                        hasBeenRecognized = true;
+                        break;
+                    }
+                }
+                if (!hasBeenRecognized) {
+                    endPoints.add(point);
+                }
             }
         }
 
-        for (Character c : lastColumn) {
-            if (c == '.') {
-                List<Integer> thisPoint = new ArrayList<>();
-                thisPoint.add(lastColumn.indexOf(c));
-                thisPoint.add(numberOfColumns - 1);
-                endPoints.add(thisPoint);
+        for (int i = 0; i < firstColumn.size(); i++) {
+            if (firstColumn.get(i) == '.') {
+                boolean hasBeenRecognized = false;
+                Point point = new Point(i, 0);
+                for (Point p : endPoints) {
+                    if (p.checkPointsEqual(point)) {
+                        hasBeenRecognized = true;
+                        break;
+                    }
+                }
+                if (!hasBeenRecognized) {
+                    endPoints.add(point);
+                }
             }
-            if (endPoints.size() == 2) {
-                return endPoints;
+        }
+
+        for (int i = 0; i < lastColumn.size(); i++) {
+            if (lastColumn.get(i) == '.') {
+                boolean hasBeenRecognized = false;
+                Point point = new Point(i, numberOfColumns - 1);
+                for (Point p : endPoints) {
+                    if (p.checkPointsEqual(point)) {
+                        hasBeenRecognized = true;
+                        break;
+                    }
+                }
+                if (!hasBeenRecognized) {
+                    endPoints.add(point);
+                }
+
             }
         }
 
@@ -102,16 +106,34 @@ public class ValidateMaze {
     }
 
     private static boolean validate(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
-        List<List<Integer>> endPoints = hasEnterAndExit(maze, numberOfRows, numberOfColumns);
-        if (endPoints.size() < 2) {
+        List<Point> endPoints = hasEnterAndExit(maze, numberOfRows, numberOfColumns);
+        if (endPoints.size() != 2) {
             return false;
         }
-        List<Integer> firstPointCoordinates = endPoints.get(0);
-        List<Integer> secondPointCoordinates = endPoints.get(1);
-        Point firstPoint = new Point(firstPointCoordinates.get(0), firstPointCoordinates.get(1));
-        Point secondPoint = new Point(secondPointCoordinates.get(0), secondPointCoordinates.get(1));
-
-        return true;
+        Point firstPoint = endPoints.get(0);
+        Point secondPoint = endPoints.get(1);
+        Queue<Point> queue = new LinkedList<>();
+        queue.add(firstPoint);
+        while (!queue.isEmpty()) {
+            Point thisPoint = queue.remove();
+            Point[] adjacentPoints = {new Point(thisPoint.getX() + 1, thisPoint.getY()),
+                    new Point(thisPoint.getX(), thisPoint.getY() + 1),
+                    new Point(thisPoint.getX() - 1, thisPoint.getY()),
+                    new Point(thisPoint.getX(), thisPoint.getY() - 1)};
+            for (Point point : adjacentPoints) {
+                boolean inBound = point.getX() < numberOfRows && point.getY() < numberOfColumns && point.getX() > -1 && point.getY() > -1;
+                if (inBound) {
+                    boolean hitWall = maze.get(point.getX()).get(point.getY()) == '#';
+                    if ((!hitWall)) {
+                        queue.add(point);
+                    }
+                }
+                if (point.checkPointsEqual(secondPoint)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -129,8 +151,12 @@ public class ValidateMaze {
                 }
                 providedMaze.add(thisRow);
             }
-            List<List<Integer>> endPoints = hasEnterAndExit(providedMaze, rows, columns);
-            System.out.println(endPoints);
+            if (validate(providedMaze, rows, columns)) {
+                System.out.println("valid");
+            }
+            else {
+                System.out.println("invalid");
+            }
         }
 
         sc.close();
