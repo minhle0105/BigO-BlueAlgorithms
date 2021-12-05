@@ -2,140 +2,94 @@ package bfs;
 
 import java.util.*;
 
-class Point{
-    private final int x;
-    private final int y;
-
-    public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public boolean checkPointsEqual(Point secondPoint) {
-        return this.getX() == secondPoint.getX() && this.getY() == secondPoint.getY();
-    }
-}
-
 public class ValidateMaze {
 
-    private static List<Point> hasEnterAndExit(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
-        List<Point> endPoints = new ArrayList<>();
-        if (numberOfColumns == 1 && numberOfRows == 1) {
-            if (maze.get(0).get(0) == '.') {
-                Point point = new Point(0, 0);
-                endPoints.add(point);
-                return endPoints;
-            }
-        }
-        else if (numberOfRows == 1) {
-            for (int i = 0; i < numberOfColumns; i++) {
-                if (maze.get(0).get(i) == '.') {
-                    Point point = new Point(0, i);
-                    endPoints.add(point);
+    static final char path = '.';
+
+    private static List<int[]> hasEnterAndExit(char[][] maze, int numberOfRows, int numberOfColumns) {
+        List<int[]> endPoints = new ArrayList<>();
+        if (numberOfRows == 1) {
+            int r = 0;
+            for (int c = 0; c < numberOfColumns; c++) {
+                if (maze[r][c] == path) {
+                    endPoints.add(new int[]{r,c});
                 }
             }
             return endPoints;
         }
         else if (numberOfColumns == 1) {
-            for (int i = 0; i < numberOfRows; i++) {
-                if (maze.get(i).get(0) == '.') {
-                    Point point = new Point(i, 0);
-                    endPoints.add(point);
+            int c = 0;
+            for (int r = 0; r < numberOfRows; r++) {
+                if (maze[r][c] == path) {
+                    endPoints.add(new int[]{r,c});
                 }
             }
             return endPoints;
         }
-        List<Character> firstRow = maze.get(0);
-        List<Character> lastRow = maze.get(numberOfRows - 1);
-        List<Character> firstColumn = new ArrayList<>();
-        List<Character> lastColumn = new ArrayList<>();
-        for (List<Character> row : maze) {
-            firstColumn.add(row.get(0));
-            lastColumn.add(row.get(row.size() - 1));
+        int[][] borders = new int[numberOfRows + numberOfRows + (numberOfColumns - 2) * 2][2];
+        int count = 0;
+        for (int i = 0; i < numberOfColumns; i++) {
+            int[] point1 = {0, i};
+            int[] point2 = {numberOfRows - 1, i};
+            borders[count++] = point1;
+            borders[count++] = point2;
         }
 
-        for (int i = 0; i < firstRow.size(); i++) {
-            if (firstRow.get(i) == '.') {
-                Point point = new Point(0, i);
-                endPoints.add(point);
-            }
+        for (int j = 1; j < numberOfRows - 1; j++) {
+            int[] point1 = {j, 0};
+            int[] point2 = {j, numberOfColumns - 1};
+            borders[count++] = point1;
+            borders[count++] = point2;
         }
 
-        for (int i = 0; i < lastRow.size(); i++) {
-            if (lastRow.get(i) == '.') {
-                Point point = new Point(numberOfRows - 1, i);
-                endPoints.add(point);
-            }
-        }
-
-        for (int i = 0; i < firstColumn.size(); i++) {
-            if (firstColumn.get(i) == '.') {
-                Point point = new Point(i, 0);
-                endPoints.add(point);
-            }
-        }
-
-        for (int i = 0; i < lastColumn.size(); i++) {
-            if (lastColumn.get(i) == '.') {
-                Point point = new Point(i, numberOfColumns - 1);
-                endPoints.add(point);
+        for (int[] border : borders) {
+            if (maze[border[0]][border[1]] == path) {
+                endPoints.add(border);
             }
         }
 
         return endPoints;
     }
 
-    private static boolean validate(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
-        List<Point> endPoints = hasEnterAndExit(maze, numberOfRows, numberOfColumns);
+    private static boolean validate(char[][] maze, int numberOfRows, int numberOfColumns) {
+        List<int[]> endPoints = hasEnterAndExit(maze, numberOfRows, numberOfColumns);
         int[][] isVisited = new int[numberOfRows][numberOfColumns];
 
-        // nếu có nhiều hơn hoặc ít hơn 2 điểm có thể là vào ra của matrix tức là sai
         if (endPoints.size() != 2) {
             return false;
         }
 
-        // tìm đường đi từ firstPoint tới secondPoint
-        Point firstPoint = endPoints.get(0);
-        Point secondPoint = endPoints.get(1);
+        int[] firstPoint = endPoints.get(0);
+        int[] secondPoint = endPoints.get(1);
 
-        Stack<Point> stack = new Stack<>();
-        stack.push(firstPoint);
-        isVisited[firstPoint.getX()][firstPoint.getY()] = 1;
-        while (!stack.isEmpty()) {
-            Point thisPoint = stack.pop();
-            // xét cả 4 trường hợp khả thi của 4 điểm kề theo 4 hướng
-            Point[] adjacentPoints = {new Point(thisPoint.getX() + 1, thisPoint.getY()),
-                    new Point(thisPoint.getX(), thisPoint.getY() + 1),
-                    new Point(thisPoint.getX() - 1, thisPoint.getY()),
-                    new Point(thisPoint.getX(), thisPoint.getY() - 1)};
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(firstPoint[0]);
+        queue.add(firstPoint[1]);
+        isVisited[firstPoint[0]][firstPoint[1]] = 1;
+        int[] dR = {-1, 1, 0, 0};
+        int[] dC = {0, 0, -1, 1};
+        while (!queue.isEmpty()) {
+            int thisPointX = queue.remove();
+            int thisPointY = queue.remove();
 
-            for (Point point : adjacentPoints) {
-                // trước hết kiểm tra xem từng điểm có nằm trong matrix không
-                boolean inBound = point.getX() < numberOfRows && point.getY() < numberOfColumns && point.getX() > -1 && point.getY() > -1;
-                if (inBound) {
-                    // nếu có trong matrix, kiểm tra xem đã được thăm chưa
-                    boolean hasNotBeenVisited = isVisited[point.getX()][point.getY()] == 0;
-                    if (hasNotBeenVisited) {
-                        // nếu chưa được thăm thì mới xét, nếu chạm tường thì bỏ, nếu không thì là đường đi
-                        boolean hitWall = maze.get(point.getX()).get(point.getY()) == '#';
-                        if ((!hitWall)) {
-                            isVisited[point.getX()][point.getY()] = 1;
-                            stack.push(point);
+            for (int direction = 0; direction < 4; direction++) {
+                int nextPointX = thisPointX + dR[direction];
+                int nextPointY = thisPointY + dC[direction];
+                boolean XinBound = nextPointX >= 0 && nextPointX < numberOfRows;
+                boolean YinBound = nextPointY >= 0 && nextPointY < numberOfColumns;
+                if (XinBound && YinBound) {
+                    if (nextPointX == secondPoint[0] && nextPointY == secondPoint[1]) {
+                        return true;
+                    }
+                    boolean isNotBlocked = maze[nextPointX][nextPointY] == path;
+                    if (isNotBlocked) {
+                        boolean isNotVisited = isVisited[nextPointX][nextPointY] == 0;
+                        if (isNotVisited) {
+                            isVisited[nextPointX][nextPointY] = 1;
+                            queue.add(nextPointX);
+                            queue.add(nextPointY);
                         }
                     }
-
-                }
-                // nếu phát hiện ra đây là điểm thoát khỏi rồi thì đúng, và dừng luôn
-                if (point.checkPointsEqual(secondPoint)) {
-                    return true;
                 }
             }
         }
@@ -149,16 +103,12 @@ public class ValidateMaze {
         for (int test = 0; test < numberOfTest; test++) {
             int rows = Integer.parseInt(sc.next());
             int columns = Integer.parseInt(sc.next());
-            List<List<Character>> providedMaze = new ArrayList<>();
-            for (int i = 0; i < rows; i++) {
-                List<Character> thisRow = new ArrayList<>();
-                String thisLine = sc.next();
-                for (char c : thisLine.toCharArray()) {
-                    thisRow.add(c);
-                }
-                providedMaze.add(thisRow);
+            char[][] maze = new char[rows][columns];
+            for (int r = 0; r < rows; r++) {
+                String thisRow = sc.next();
+                maze[r] = thisRow.toCharArray();
             }
-            if (validate(providedMaze, rows, columns)) {
+            if (validate(maze, rows, columns)) {
                 results[test] = "valid";
             }
             else {
