@@ -62,15 +62,15 @@ public class ValidateMaze {
         int[] firstPoint = endPoints.get(0);
         int[] secondPoint = endPoints.get(1);
 
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(firstPoint[0]);
-        queue.add(firstPoint[1]);
+        Stack<Integer> stack = new Stack<>();
+        stack.push(firstPoint[1]);
+        stack.push(firstPoint[0]);
         isVisited[firstPoint[0]][firstPoint[1]] = 1;
         int[] dR = {-1, 1, 0, 0};
         int[] dC = {0, 0, -1, 1};
-        while (!queue.isEmpty()) {
-            int thisPointX = queue.remove();
-            int thisPointY = queue.remove();
+        while (!stack.isEmpty()) {
+            int thisPointX = stack.pop();
+            int thisPointY = stack.pop();
 
             for (int direction = 0; direction < 4; direction++) {
                 int nextPointX = thisPointX + dR[direction];
@@ -86,8 +86,8 @@ public class ValidateMaze {
                         boolean isNotVisited = isVisited[nextPointX][nextPointY] == 0;
                         if (isNotVisited) {
                             isVisited[nextPointX][nextPointY] = 1;
-                            queue.add(nextPointX);
-                            queue.add(nextPointY);
+                            stack.push(nextPointY);
+                            stack.push(nextPointX);
                         }
                     }
                 }
