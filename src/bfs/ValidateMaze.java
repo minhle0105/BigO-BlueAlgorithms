@@ -87,7 +87,6 @@ public class ValidateMaze {
             if (lastColumn.get(i) == '.') {
                 Point point = new Point(i, numberOfColumns - 1);
                 endPoints.add(point);
-
             }
         }
 
@@ -96,27 +95,45 @@ public class ValidateMaze {
 
     private static boolean validate(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
         List<Point> endPoints = hasEnterAndExit(maze, numberOfRows, numberOfColumns);
+        int[][] isVisited = new int[numberOfRows][numberOfColumns];
+
+        // nếu có nhiều hơn hoặc ít hơn 2 điểm có thể là vào ra của matrix tức là sai
         if (endPoints.size() != 2) {
             return false;
         }
+
+        // tìm đường đi từ firstPoint tới secondPoint
         Point firstPoint = endPoints.get(0);
         Point secondPoint = endPoints.get(1);
+
         Queue<Point> queue = new LinkedList<>();
         queue.add(firstPoint);
+        isVisited[firstPoint.getX()][firstPoint.getY()] = 1;
         while (!queue.isEmpty()) {
             Point thisPoint = queue.remove();
+            // xét cả 4 trường hợp khả thi của 4 điểm kề theo 4 hướng
             Point[] adjacentPoints = {new Point(thisPoint.getX() + 1, thisPoint.getY()),
                     new Point(thisPoint.getX(), thisPoint.getY() + 1),
                     new Point(thisPoint.getX() - 1, thisPoint.getY()),
                     new Point(thisPoint.getX(), thisPoint.getY() - 1)};
+
             for (Point point : adjacentPoints) {
+                // trước hết kiểm tra xem từng điểm có nằm trong matrix không
                 boolean inBound = point.getX() < numberOfRows && point.getY() < numberOfColumns && point.getX() > -1 && point.getY() > -1;
                 if (inBound) {
-                    boolean hitWall = maze.get(point.getX()).get(point.getY()) == '#';
-                    if ((!hitWall)) {
-                        queue.add(point);
+                    // nếu có trong matrix, kiểm tra xem đã được thăm chưa
+                    boolean hasNotBeenVisited = isVisited[point.getX()][point.getY()] == 0;
+                    if (hasNotBeenVisited) {
+                        // nếu chưa được thăm thì mới xét, nếu chạm tường thì bỏ, nếu không thì là đường đi
+                        boolean hitWall = maze.get(point.getX()).get(point.getY()) == '#';
+                        if ((!hitWall)) {
+                            queue.add(point);
+                            isVisited[point.getX()][point.getY()] = 1;
+                        }
                     }
+
                 }
+                // nếu phát hiện ra đây là điểm thoát khỏi rồi thì đúng, và dừng luôn
                 if (point.checkPointsEqual(secondPoint)) {
                     return true;
                 }
