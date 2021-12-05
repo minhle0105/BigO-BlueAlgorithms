@@ -64,65 +64,29 @@ public class ValidateMaze {
 
         for (int i = 0; i < firstRow.size(); i++) {
             if (firstRow.get(i) == '.') {
-                boolean hasBeenRecognized = false;
                 Point point = new Point(0, i);
-                for (Point p : endPoints) {
-                    if (p.checkPointsEqual(point)) {
-                        hasBeenRecognized = true;
-                        break;
-                    }
-                }
-                if (!hasBeenRecognized) {
-                    endPoints.add(point);
-                }
+                endPoints.add(point);
             }
         }
 
         for (int i = 0; i < lastRow.size(); i++) {
             if (lastRow.get(i) == '.') {
-                boolean hasBeenRecognized = false;
                 Point point = new Point(numberOfRows - 1, i);
-                for (Point p : endPoints) {
-                    if (p.checkPointsEqual(point)) {
-                        hasBeenRecognized = true;
-                        break;
-                    }
-                }
-                if (!hasBeenRecognized) {
-                    endPoints.add(point);
-                }
+                endPoints.add(point);
             }
         }
 
         for (int i = 0; i < firstColumn.size(); i++) {
             if (firstColumn.get(i) == '.') {
-                boolean hasBeenRecognized = false;
                 Point point = new Point(i, 0);
-                for (Point p : endPoints) {
-                    if (p.checkPointsEqual(point)) {
-                        hasBeenRecognized = true;
-                        break;
-                    }
-                }
-                if (!hasBeenRecognized) {
-                    endPoints.add(point);
-                }
+                endPoints.add(point);
             }
         }
 
         for (int i = 0; i < lastColumn.size(); i++) {
             if (lastColumn.get(i) == '.') {
-                boolean hasBeenRecognized = false;
                 Point point = new Point(i, numberOfColumns - 1);
-                for (Point p : endPoints) {
-                    if (p.checkPointsEqual(point)) {
-                        hasBeenRecognized = true;
-                        break;
-                    }
-                }
-                if (!hasBeenRecognized) {
-                    endPoints.add(point);
-                }
+                endPoints.add(point);
 
             }
         }
