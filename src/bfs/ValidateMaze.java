@@ -28,6 +28,31 @@ public class ValidateMaze {
 
     private static List<Point> hasEnterAndExit(List<List<Character>> maze, int numberOfRows, int numberOfColumns) {
         List<Point> endPoints = new ArrayList<>();
+        if (numberOfColumns == 1 && numberOfRows == 1) {
+            if (maze.get(0).get(0) == '.') {
+                Point point = new Point(0, 0);
+                endPoints.add(point);
+                return endPoints;
+            }
+        }
+        else if (numberOfRows == 1) {
+            for (int i = 0; i < numberOfColumns; i++) {
+                if (maze.get(0).get(i) == '.') {
+                    Point point = new Point(0, i);
+                    endPoints.add(point);
+                }
+            }
+            return endPoints;
+        }
+        else if (numberOfColumns == 1) {
+            for (int i = 0; i < numberOfRows; i++) {
+                if (maze.get(i).get(0) == '.') {
+                    Point point = new Point(i, 0);
+                    endPoints.add(point);
+                }
+            }
+            return endPoints;
+        }
         List<Character> firstRow = maze.get(0);
         List<Character> lastRow = maze.get(numberOfRows - 1);
         List<Character> firstColumn = new ArrayList<>();
@@ -158,7 +183,6 @@ public class ValidateMaze {
                 System.out.println("invalid");
             }
         }
-
         sc.close();
     }
 }
