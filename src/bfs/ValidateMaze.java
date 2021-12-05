@@ -106,11 +106,11 @@ public class ValidateMaze {
         Point firstPoint = endPoints.get(0);
         Point secondPoint = endPoints.get(1);
 
-        Queue<Point> queue = new LinkedList<>();
-        queue.add(firstPoint);
+        Stack<Point> stack = new Stack<>();
+        stack.push(firstPoint);
         isVisited[firstPoint.getX()][firstPoint.getY()] = 1;
-        while (!queue.isEmpty()) {
-            Point thisPoint = queue.remove();
+        while (!stack.isEmpty()) {
+            Point thisPoint = stack.pop();
             // xét cả 4 trường hợp khả thi của 4 điểm kề theo 4 hướng
             Point[] adjacentPoints = {new Point(thisPoint.getX() + 1, thisPoint.getY()),
                     new Point(thisPoint.getX(), thisPoint.getY() + 1),
@@ -127,8 +127,8 @@ public class ValidateMaze {
                         // nếu chưa được thăm thì mới xét, nếu chạm tường thì bỏ, nếu không thì là đường đi
                         boolean hitWall = maze.get(point.getX()).get(point.getY()) == '#';
                         if ((!hitWall)) {
-                            queue.add(point);
                             isVisited[point.getX()][point.getY()] = 1;
+                            stack.push(point);
                         }
                     }
 
@@ -145,6 +145,7 @@ public class ValidateMaze {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int numberOfTest = Integer.parseInt(sc.next());
+        String[] results = new String[numberOfTest];
         for (int test = 0; test < numberOfTest; test++) {
             int rows = Integer.parseInt(sc.next());
             int columns = Integer.parseInt(sc.next());
@@ -158,11 +159,14 @@ public class ValidateMaze {
                 providedMaze.add(thisRow);
             }
             if (validate(providedMaze, rows, columns)) {
-                System.out.println("valid");
+                results[test] = "valid";
             }
             else {
-                System.out.println("invalid");
+                results[test] = "invalid";
             }
+        }
+        for (String result : results) {
+            System.out.println(result);
         }
         sc.close();
     }
