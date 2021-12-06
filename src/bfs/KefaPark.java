@@ -6,14 +6,11 @@ public class KefaPark {
 
     private static int solution (List<List<Integer>> graph, int[] cats, int catTolerance) {
         Queue<Integer> queue = new LinkedList<>();
-        HashMap<Integer, Boolean> hasRestaurant = new HashMap<>();
-        int consecutiveCats = 0;
-        for (int i = 1; i < graph.size(); i++) {
+        List<Integer> restaurants = new ArrayList<>();
+        List<Integer> catCounts = new ArrayList<>();
+        for (int i = 2; i < graph.size(); i++) {
             if (graph.get(i).size() == 1) {
-                hasRestaurant.put(i, true);
-            }
-            else {
-                hasRestaurant.put(i, false);
+                restaurants.add(i);
             }
         }
 
@@ -23,36 +20,57 @@ public class KefaPark {
         for (int i = 0; i < graph.size(); i++) {
             visited.add(false);
             path.add(-1);
+            catCounts.add(-1);
+        }
+
+        if (cats[topVer - 1] == 1) {
+            catCounts.set(topVer, 1);
         }
 
         visited.set(topVer, true);
         queue.add(topVer);
         while (!queue.isEmpty()) {
             int removedVer = queue.remove();
-            if (cats[removedVer - 1] == 1) {
-                consecutiveCats++;
-            }
             for (int i = 0; i < graph.get(removedVer).size(); i++) {
                 int nextVer = graph.get(removedVer).get(i);
-                if (cats[nextVer - 1] == 1) {
-                    if (consecutiveCats < catTolerance) {
-                        consecutiveCats++;
-                    }
-                    else {
-                        continue;
-                    }
-                }
-                if (cats[nextVer - 1] == 0 && !visited.get(nextVer)) {
+                if (!visited.get(nextVer)) {
                     queue.add(nextVer);
                     visited.set(nextVer, true);
                     path.set(nextVer, removedVer);
-                    consecutiveCats = 0;
                 }
             }
         }
+
         int count = 0;
-        for (int i = 0; i < path.size(); i++) {
-            if (path.get(i) != -1 && hasRestaurant.get(i)) {
+
+        for (Integer restaurant : restaurants) {
+            int consecutiveCats = 0;
+            int previousPoint = path.get(restaurant);
+            if (cats[restaurant - 1] == 1) {
+                consecutiveCats ++;
+            }
+            if (cats[previousPoint - 1] == 1) {
+                consecutiveCats++;
+            }
+            else {
+                consecutiveCats = 0;
+            }
+            if (consecutiveCats > catTolerance) {
+                continue;
+            }
+            while (path.get(previousPoint) != -1) {
+                previousPoint = path.get(previousPoint);
+                if (cats[previousPoint - 1] == 1) {
+                    consecutiveCats++;
+                }
+                else {
+                    consecutiveCats = 0;
+                }
+                if (consecutiveCats > catTolerance) {
+                    break;
+                }
+            }
+            if (previousPoint == 1 && consecutiveCats <= catTolerance) {
                 count++;
             }
         }
