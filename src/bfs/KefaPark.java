@@ -7,7 +7,6 @@ public class KefaPark {
     private static int solution (List<List<Integer>> graph, int[] cats, int catTolerance) {
         Queue<Integer> queue = new LinkedList<>();
         List<Integer> restaurants = new ArrayList<>();
-        List<Integer> catCounts = new ArrayList<>();
         for (int i = 2; i < graph.size(); i++) {
             if (graph.get(i).size() == 1) {
                 restaurants.add(i);
@@ -20,11 +19,6 @@ public class KefaPark {
         for (int i = 0; i < graph.size(); i++) {
             visited.add(false);
             path.add(-1);
-            catCounts.add(-1);
-        }
-
-        if (cats[topVer - 1] == 1) {
-            catCounts.set(topVer, 1);
         }
 
         visited.set(topVer, true);
@@ -92,9 +86,6 @@ public class KefaPark {
         for (int i = 0; i < v + 1; i++) {
             graph.add(new ArrayList<>());
         }
-
-
-
         for (int i = 0; i < e; i++) {
             int v1 = Integer.parseInt(sc.next());
             int v2 = Integer.parseInt(sc.next());
