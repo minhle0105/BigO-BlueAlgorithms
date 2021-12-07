@@ -4,19 +4,27 @@ import java.util.*;
 
 public class Slink {
 
-    private static List<Integer> solution(int[][] map, int row, int column) {
-        int[] startPoint = {0, 0};
+    private static List<Integer> solution(int[][] map, int[][] visited, int row, int column) {
+        int[] startPoint = new int[2];
+        for (int r = 0; r < map.length; r++) {
+            for (int c = 0; c < map[r].length; c++) {
+                if (map[r][c] == 1) {
+                    startPoint[0] = r;
+                    startPoint[1] = c;
+                    break;
+                }
+            }
+        }
         List<Integer> width = new ArrayList<>();
         int[] dR = {-1, 1, 0, 0};
         int[] dC = {0, 0, -1, 1};
-        int[][] visited = new int[row][column];
         Queue<Integer> queue = new LinkedList<>();
         queue.add(startPoint[0]);
         queue.add(startPoint[1]);
         visited[0][0] = 1;
 
         // bắt đầu đếm số vết loang, nếu ô đầu tiên bị loang thì bắt đầu từ 1
-        int count = map[startPoint[0]][startPoint[1]] == 1 ? 1 : 0;
+        int count = 1;
         while (!queue.isEmpty()) {
             int x = queue.remove();
             int y = queue.remove();
@@ -30,11 +38,7 @@ public class Slink {
                     if (visited[nextX][nextY] == 0) {
                         queue.add(nextX);
                         queue.add(nextY);
-
-                        // nếu toạ độ này có vết loang thì tăng count lên
-                        if (map[nextX][nextY] == 1) {
-                            count++;
-                        }
+                        count++;
                     }
                     // miễn là inbound thì dù có loang hay không cũng là thăm rồi nên đổi thành thăm rồi
                     visited[nextX][nextY] = 1;
@@ -50,6 +54,7 @@ public class Slink {
         int row = Integer.parseInt(sc.next());
         int column = Integer.parseInt(sc.next());
         int[][] map = new int[row][column];
+        int[][] visited = new int[row][column];
         for (int r = 0; r < row; r++) {
             int[] thisRow = new int[column];
             for (int c = 0; c < column; c++) {
@@ -57,7 +62,14 @@ public class Slink {
             }
             map[r] = thisRow;
         }
-        solution(map, row, column);
+        for (int r = 0; r < map.length; r++) {
+            for (int c = 0; c < map[r].length; c++) {
+                if (map[r][c] == 0) {
+                    visited[r][c] = 1;
+                }
+            }
+        }
+        solution(map, visited, row, column);
         sc.close();
     }
 }
