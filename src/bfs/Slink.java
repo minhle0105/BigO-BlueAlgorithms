@@ -15,7 +15,7 @@ public class Slink {
         return new int[]{-1,-1};
     }
 
-    private static HashMap<Integer, Integer> solution(int[][] map, int[][] visited, int row, int column, int[] startPoint, int count, HashMap<Integer, Integer> hashMap) {
+    private static HashMap<Integer, Integer> solution(int[][] visited, int row, int column, int[] startPoint, int count, HashMap<Integer, Integer> hashMap) {
         if (graphIsFull(visited)[0] == -1) {
             return hashMap;
         }
@@ -56,7 +56,7 @@ public class Slink {
 
         int[] nextStartPoint = graphIsFull(visited);
         count = 0;
-        return solution(map, visited, row, column, nextStartPoint, count, hashMap);
+        return solution(visited, row, column, nextStartPoint, count, hashMap);
 
 }
 
@@ -99,7 +99,7 @@ public class Slink {
                 }
             }
             HashMap<Integer, Integer> hashMap = new HashMap<>();
-            HashMap<Integer, Integer> result = solution(map, visited, row, column, startPoint, count, hashMap);
+            HashMap<Integer, Integer> result = solution(visited, row, column, startPoint, count, hashMap);
             List<Integer> keySet = new ArrayList<>(result.keySet());
             Collections.sort(keySet);
             int sum = 0;
