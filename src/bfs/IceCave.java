@@ -32,17 +32,16 @@ public class IceCave {
                 boolean XinBound = nextPointX >= 0 && nextPointX < row;
                 boolean YinBound = nextPointY >= 0 && nextPointY < column;
                 boolean inBound = XinBound && YinBound;
-                if (!inBound) {
-                    continue;
-                }
-                if (visited[nextPointX][nextPointY] == 1 && nextPointX == endPoint[0] && nextPointY == endPoint[1]) {
-                    return true;
-                }
-                boolean isNotVisited = visited[nextPointX][nextPointY] == 0;
-                if (isNotVisited) {
-                    visited[nextPointX][nextPointY] = 1;
-                    stack.push(nextPointY);
-                    stack.push(nextPointX);
+                if (inBound) {
+                    if (visited[nextPointX][nextPointY] == 1 && nextPointX == endPoint[0] && nextPointY == endPoint[1]) {
+                        return true;
+                    }
+                    boolean isNotVisited = visited[nextPointX][nextPointY] == 0;
+                    if (isNotVisited) {
+                        visited[nextPointX][nextPointY] = 1;
+                        stack.push(nextPointY);
+                        stack.push(nextPointX);
+                    }
                 }
             }
         }
