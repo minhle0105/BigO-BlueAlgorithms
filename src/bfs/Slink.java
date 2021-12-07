@@ -4,6 +4,12 @@ import java.util.*;
 
 public class Slink {
 
+    /**
+     * Kiểm tra xem graph đã được visit hết chưa, vì mình chỉ có thể kiểm tra những vết dầu liên tiếp.
+     * Nếu các vết cách biệt nhau thì mình không tự kiểm tra được, nên phải có hàm dò tiếp
+     * @param visited biểu đồ đã visited
+     * @return nếu còn chỗ nào chưa visit thì trả về toạ độ điểm đó, không thì {-1,-1}
+     */
     private static int[] graphIsFull(int[][] visited) {
         for (int i = 0; i < visited.length; i++) {
             for (int j = 0; j < visited[i].length; j++) {
@@ -15,6 +21,16 @@ public class Slink {
         return new int[]{-1,-1};
     }
 
+    /**
+     * Thuật toán chính, liên tục tìm kiếm dựa trên toạ độ bắt đầu được đưa vào
+     * @param visited đưa thông tin những điểm có vết dầu chưa được kiểm tra
+     * @param row số hàng trong ma trận
+     * @param column số cột trong ma trận
+     * @param startPoint điểm có dầu bắt đầu tìm kiếm tại lượt này
+     * @param count số điểm có dầu liên tiếp đang được đếm
+     * @param hashMap map độ rộng mỗi điểm với số lần độ rộng đó xuất hiện
+     * @return map
+     */
     private static HashMap<Integer, Integer> solution(int[][] visited, int row, int column, int[] startPoint, int count, HashMap<Integer, Integer> hashMap) {
         if (graphIsFull(visited)[0] == -1) {
             return hashMap;
