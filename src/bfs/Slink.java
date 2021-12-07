@@ -34,9 +34,6 @@ public class Slink {
                         // nếu toạ độ này có vết loang thì tăng count lên
                         if (map[nextX][nextY] == 1) {
                             count++;
-                        } else { // nếu không có vết count thì chuỗi loang bị đứt, nên ghi lại biến count và reset về 0
-                            width.add(count);
-                            count = 0;
                         }
                     }
                     // miễn là inbound thì dù có loang hay không cũng là thăm rồi nên đổi thành thăm rồi
