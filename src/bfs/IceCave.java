@@ -3,13 +3,14 @@ package bfs;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class IceCave {
 
     private static boolean solution(char[][] map, int[] startPoint, int[] endPoint, int row, int column) {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(startPoint[0]);
-        queue.add(startPoint[1]);
+        Stack<Integer> stack = new Stack<>();
+        stack.push(startPoint[1]);
+        stack.push(startPoint[0]);
         int[][] visited = new int[row][column];
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
@@ -21,9 +22,9 @@ public class IceCave {
         visited[startPoint[0]][startPoint[1]] = 1;
         int[] dR = {0, 0, 1, -1};
         int[] dC = {1, -1, 0, 0};
-        while (!queue.isEmpty()) {
-            int thisPointX = queue.remove();
-            int thisPointY = queue.remove();
+        while (!stack.isEmpty()) {
+            int thisPointX = stack.pop();
+            int thisPointY = stack.pop();
 
             for (int direction = 0; direction < 4; direction++) {
                 int nextPointX = thisPointX + dR[direction];
@@ -40,8 +41,8 @@ public class IceCave {
                 boolean isNotVisited = visited[nextPointX][nextPointY] == 0;
                 if (isNotVisited) {
                     visited[nextPointX][nextPointY] = 1;
-                    queue.add(nextPointX);
-                    queue.add(nextPointY);
+                    stack.push(nextPointY);
+                    stack.push(nextPointX);
                 }
             }
         }
