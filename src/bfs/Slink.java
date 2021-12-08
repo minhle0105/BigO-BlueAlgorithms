@@ -59,17 +59,12 @@ public class Slink {
                         visited[nextX][nextY] = 1;
                     }
                 }
-
             }
         }
 
         if (hashMap.containsKey(count)) {
             hashMap.put(count, hashMap.get(count) + 1);
         }
-        else {
-            hashMap.put(count, 1);
-        }
-
         int[] nextStartPoint = graphIsFull(visited);
         count = 0;
         return solution(visited, row, column, nextStartPoint, count, hashMap);

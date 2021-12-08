@@ -1,5 +1,6 @@
 package bfs;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -32,16 +33,20 @@ public class Sheep {
         int[] dC = {0, 0, -1, 1};
         queue.add(startPoint[0]);
         queue.add(startPoint[1]);
-        if (map[startPoint[0]][startPoint[0]] == sheep) {
+        if (map[startPoint[0]][startPoint[1]] == sheep) {
             sheepInThisArea++;
         }
-        if (map[startPoint[0]][startPoint[0]] == wolves) {
+        if (map[startPoint[0]][startPoint[1]] == wolves) {
             wolvesInThisArea++;
         }
         visited[startPoint[0]][startPoint[1]] = 1;
+        boolean isOnBound = false;
         while (!queue.isEmpty()) {
             int x = queue.remove();
             int y = queue.remove();
+            if (x == 0 | x == numberOfRows - 1 | y == 0 || y == numberOfColumns - 1) {
+                isOnBound = true;
+            }
             for (int direction = 0; direction < 4; direction++) {
                 int nextX = x + dR[direction];
                 int nextY = y + dC[direction];
@@ -60,11 +65,13 @@ public class Sheep {
                 }
             }
         }
-        if (sheepInThisArea > wolvesInThisArea) {
-            sheepWolves[1] -= wolvesInThisArea;
-        }
-        else {
-            sheepWolves[0] -= sheepInThisArea;
+        if (!isOnBound) {
+            if (sheepInThisArea > wolvesInThisArea) {
+                sheepWolves[1] -= wolvesInThisArea;
+            }
+            else {
+                sheepWolves[0] -= sheepInThisArea;
+            }
         }
         int[] nextStartPoint = mapIsFullyVisited(visited);
         return solution(map, visited, nextStartPoint, numberOfRows, numberOfColumns, sheepWolves);
