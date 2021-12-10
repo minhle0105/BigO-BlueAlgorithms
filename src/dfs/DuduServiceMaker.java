@@ -11,6 +11,7 @@ public class DuduServiceMaker {
             int removedNumber = stack.pop();
             for (int i = 0; i < graph.get(removedNumber).size(); i++) {
                 int nextNumber = graph.get(removedNumber).get(i);
+                // nếu điểm này đã được visited rồi tức là đang có cycle quay lại điểm cũ -> true
                 if (visited.get(nextNumber) == 1) {
                     return true;
                 }
@@ -20,7 +21,17 @@ public class DuduServiceMaker {
                 }
             }
         }
+
+        // đi hết mà không tìm ra true thì false
         return false;
+    }
+
+    private static List<Integer> initNewVisitedList(int bound) {
+        List<Integer> visited = new ArrayList<>();
+        for (int i = 0; i < bound; i++) {
+            visited.add(0);
+        }
+        return visited;
     }
 
     public static void main(String[] args) {
@@ -35,29 +46,25 @@ public class DuduServiceMaker {
                 graph.add(new ArrayList<>());
             }
 
+            List<Integer> visited;
+
             for (int i = 0; i < connections; i++) {
                 int v1 = Integer.parseInt(sc.next());
                 int v2 = Integer.parseInt(sc.next());
                 graph.get(v1).add(v2);
             }
 
-            List<Integer> visited = new ArrayList<>();
-
+            boolean hasCycle = false;
+            // test thử từ từng điểm xem nếu tìm được cycle thì dừng luôn
             for (int i = 0; i < graph.size(); i++) {
-                visited.add(0);
-            }
-
-            int startPoint = -1;
-            for (int i = 0; i < graph.size(); i++) {
-                if (graph.get(i).size() > 0) {
-                    startPoint = i;
-                }
-                if (startPoint != -1) {
+                visited = initNewVisitedList(graph.size());
+                visited.set(i, 1);
+                if(solution(graph, visited, i)) {
+                    hasCycle = true;
                     break;
                 }
             }
-            visited.set(startPoint, 1);
-            results[test] = solution(graph, visited, startPoint);
+            results[test] = hasCycle;
         }
 
         for (boolean result : results) {
