@@ -35,7 +35,7 @@ class Point {
         return this.adjacencyWeight.get(neighborId);
     }
 
-    public Set<Integer> getAllNeighbors () {
+    public Set<Integer> getAllNeighbors() {
         return this.adjacencyWeight.keySet();
     }
 }
@@ -87,7 +87,6 @@ public class Benefactor {
     }
 
 
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int numberOfTests = Integer.parseInt(sc.next());
@@ -109,7 +108,7 @@ public class Benefactor {
                 int v1 = Integer.parseInt(sc.next());
                 int v2 = Integer.parseInt(sc.next());
                 int weight = Integer.parseInt(sc.next());
-                graph.get(v1).addNeighbor(v2,weight);
+                graph.get(v1).addNeighbor(v2, weight);
                 graph.get(v2).addNeighbor(v1, weight);
             }
 

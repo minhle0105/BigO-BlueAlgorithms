@@ -4,34 +4,55 @@ import java.util.*;
 
 public class DuduServiceMaker {
 
-    private static boolean solution(List<List<Integer>> graph, List<Integer> visited, int startPoint) {
-        Stack<Integer> stack = new Stack<>();
-        stack.push(startPoint);
-        while (!stack.isEmpty()) {
-            int removedNumber = stack.pop();
-            for (int i = 0; i < graph.get(removedNumber).size(); i++) {
-                int nextNumber = graph.get(removedNumber).get(i);
-                // nếu điểm này đã được visited rồi tức là đang có cycle quay lại điểm cũ -> true
-                if (visited.get(nextNumber) == 1) {
-                    return true;
-                }
-                else if (visited.get(nextNumber) ==  0){
-                    stack.push(nextNumber);
-                    visited.set(nextNumber, 1);
-                }
+    private static boolean solution(int[][] graph, int numberOfCourse) {
+        Map<Integer, List<Integer>> courseMap = new HashMap<>();
+        for (int[] connection : graph) {
+            if (courseMap.containsKey(connection[1])) {
+                courseMap.get(connection[1]).add(connection[0]);
+            }
+            else {
+                List<Integer> nextCourses = new LinkedList<>();
+                nextCourses.add(connection[0]);
+                courseMap.put(connection[1], nextCourses);
             }
         }
 
-        // đi hết mà không tìm ra true thì false
+        boolean[] checked = new boolean[numberOfCourse + 1];
+        boolean[] inPath = new boolean[numberOfCourse + 1];
+
+        for (int i = 0; i < numberOfCourse; i++) {
+            if (hasCycle(i, courseMap, checked, inPath)) {
+                return true;
+            }
+        }
         return false;
     }
 
-    private static List<Integer> initNewVisitedList(int bound) {
-        List<Integer> visited = new ArrayList<>();
-        for (int i = 0; i < bound; i++) {
-            visited.add(0);
+    private static boolean hasCycle(int course, Map<Integer, List<Integer>> courseMap, boolean[] checked, boolean[] inPath) {
+        if (checked[course]) {
+            return false;
         }
-        return visited;
+        if (inPath[course]) {
+            return true;
+        }
+
+        if(!courseMap.containsKey(course)) {
+            return false;
+        }
+
+        inPath[course] = true;
+        boolean isCyclic = false;
+
+        for (Integer prerequisite : courseMap.get(course)) {
+            isCyclic = hasCycle(prerequisite, courseMap, checked, inPath);
+            if (isCyclic) {
+                break;
+            }
+        }
+
+        inPath[course] = false;
+        checked[course] = true;
+        return isCyclic;
     }
 
     public static void main(String[] args) {
@@ -41,30 +62,19 @@ public class DuduServiceMaker {
         for (int test = 0; test < numberOfTest; test++) {
             int vertices = Integer.parseInt(sc.next());
             int connections = Integer.parseInt(sc.next());
-            List<List<Integer>> graph = new ArrayList<>();
-            for (int i = 0; i < vertices + 1; i++) {
-                graph.add(new ArrayList<>());
-            }
-
-            List<Integer> visited;
+            int[][] graph = new int[connections][2];
 
             for (int i = 0; i < connections; i++) {
-                int v1 = Integer.parseInt(sc.next());
-                int v2 = Integer.parseInt(sc.next());
-                graph.get(v1).add(v2);
+                int[] connection = new int[2];
+                connection[0] = Integer.parseInt(sc.next());
+                connection[1] = Integer.parseInt(sc.next());
+                graph[i] = connection;
             }
 
-            boolean hasCycle = false;
-            // test thử từ từng điểm xem nếu tìm được cycle thì dừng luôn
-            for (int i = 0; i < graph.size(); i++) {
-                visited = initNewVisitedList(graph.size());
-                visited.set(i, 1);
-                if(solution(graph, visited, i)) {
-                    hasCycle = true;
-                    break;
-                }
-            }
-            results[test] = hasCycle;
+
+            boolean result = solution(graph, vertices);
+
+            results[test] = result;
         }
 
         for (boolean result : results) {
