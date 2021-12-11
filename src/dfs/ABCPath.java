@@ -14,10 +14,14 @@ public class ABCPath {
         Stack<Integer> stack = new Stack<>();
         stack.push(startPoint[1]);
         stack.push(startPoint[0]);
-        int count = 1;
+        int maxAscii = 0;
+        final int asciiA = 'A';
         while (!stack.isEmpty()) {
             int thisRow = stack.pop();
             int thisColumn = stack.pop();
+            if ((int) map[thisRow][thisColumn] - asciiA + 1 > maxAscii) {
+                maxAscii = map[thisRow][thisColumn] - asciiA + 1;
+            }
             for (int direction = 0; direction < 8; direction++) {
                 int nextRow = thisRow + dR[direction];
                 int nextColumn = thisColumn + dC[direction];
@@ -28,13 +32,12 @@ public class ABCPath {
                             visited[nextRow][nextColumn] = 1;
                             stack.push(nextColumn);
                             stack.push(nextRow);
-                            count++;
                         }
                     }
                 }
             }
         }
-        return count;
+        return maxAscii;
     }
 
     public static void main(String[] args) {
@@ -62,10 +65,10 @@ public class ABCPath {
             }
 
             int maxVal = 0;
-            for (int i = 0; i < possibleStartPoint.size(); i++) {
+            for (int[] ints : possibleStartPoint) {
                 int[][] visited = new int[numberOfRows][numberOfColumns];
-                visited[possibleStartPoint.get(0)[0]][possibleStartPoint.get(0)[1]] = 1;
-                int result = solution(map, visited, possibleStartPoint.get(0), numberOfRows, numberOfColumns);
+                visited[ints[0]][ints[1]] = 1;
+                int result = solution(map, visited, ints, numberOfRows, numberOfColumns);
                 if (result > maxVal) {
                     maxVal = result;
                 }

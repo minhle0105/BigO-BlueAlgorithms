@@ -7,58 +7,80 @@ import java.util.Stack;
 
 public class AllIsWell {
     static final String target = "ALLIZZWELL";
+    static final int[] dR = {0, 0, 1, -1, -1, -1, 1, 1};
+    static final int[] dC = {1, -1, 0, 0, -1, 1, -1, 1};
 
-    private static boolean solution(char[][] map, int numberOfRows, int numberOfColumns) {
-        int[][] visited = new int[map.length][map[0].length];
-        int currentPointer = 1;
-        Stack<Integer> stack = new Stack<>();
-        stack.push(0);
-        stack.push(0);
-        visited[0][0] = 1;
-        int[] dR = {0, 0, 1, -1, -1, -1, 1, 1};
-        int[] dC = {1, -1, 0, 0, -1, 1, -1, 1};
-        while (!stack.isEmpty()) {
-            int thisRow = stack.pop();
-            int thisColumn = stack.pop();
-            boolean foundNext = false;
-            for (int direction = 0; direction < 8; direction++) {
-                int nextRow = thisRow + dR[direction];
-                int nextColumn = thisColumn + dC[direction];
-                boolean isInBound = nextRow >= 0 && nextRow < numberOfRows && nextColumn >= 0 && nextColumn < numberOfColumns;
-                if (!isInBound) {
-                    continue;
+    private static boolean solution(char[][] map, int numberOfRows, int numberOfColumns, int[] startPoint, int pointer) {
+        int[][] visited = new int[numberOfRows][numberOfColumns];
+        visited[startPoint[0]][startPoint[1]] = 1;
+        return dfs(map, visited, startPoint, 1);
+    }
+
+    private static boolean dfs(char[][] map, int[][] visited, int[] startPoint, int pointer) {
+        if (pointer == target.length()) {
+            return true;
+        }
+        boolean r = false;
+        visited[startPoint[0]][startPoint[1]] = 1;
+        for (int i = 0; i < 8; i++) {
+            int nextX = startPoint[0] + dR[i];
+            int nextY = startPoint[1] + dC[i];
+            boolean inBound = nextX >= 0 && nextX < map.length && nextY >= 0 && nextY < map[0].length;
+            if (inBound) {
+                if (visited[nextX][nextY] == 0 && map[nextX][nextY] == target.charAt(pointer)) {
+                    int[] nextStartPoint = new int[]{nextX, nextY};
+                    r = r || dfs(map, visited, nextStartPoint, pointer + 1);
                 }
-                if (map[nextRow][nextColumn] != target.charAt(currentPointer)) {
-                    visited[nextRow][nextColumn] = 1;
-                    continue;
-                }
-                if (map[nextRow][nextColumn] == target.charAt(currentPointer) && visited[nextRow][nextColumn] == 0) {
-                    stack.push(nextColumn);
-                    stack.push(nextRow);
-                    currentPointer++;
-                    visited[nextRow][nextColumn] = 1;
-                    foundNext = true;
-                    break;
-                }
-            }
-            if (foundNext) {
-                continue;
             }
         }
-        return currentPointer == target.length();
+        visited[startPoint[0]][startPoint[1]] = 0;
+        return r;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int row = Integer.parseInt(sc.next());
-        int column = Integer.parseInt(sc.next());
-        char[][] map = new char[row][column];
-        for (int i = 0; i < map.length; i++) {
-            String thisRow = sc.next();
-            map[i] = thisRow.toCharArray();
+        int numberOfTest = Integer.parseInt(sc.next());
+        String[] results = new String[numberOfTest];
+        for (int test = 0; test < numberOfTest; test++) {
+            int row = sc.nextInt();
+            int column = sc.nextInt();
+            char[][] map = new char[row][column];
+            for (int i = 0; i < map.length; i++) {
+                String thisRow = sc.next();
+                map[i] = thisRow.toCharArray();
+            }
+
+            int pointer = 0;
+
+            List<int[]> possibleStartPoint = new ArrayList<>();
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < column; j++) {
+                    if (map[i][j] == 'A') {
+                        possibleStartPoint.add(new int[]{i,j});
+                    }
+                }
+            }
+
+            boolean exists = false;
+            for (int[] ints : possibleStartPoint) {
+                if (solution(map, row, column, ints, pointer)) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (exists) {
+                results[test] = "YES";
+            }
+            else {
+                results[test] = "NO";
+            }
         }
 
-        System.out.println(solution(map, row, column));
+        for (String result : results) {
+            System.out.println(result);
+        }
+
 
         sc.close();
     }
