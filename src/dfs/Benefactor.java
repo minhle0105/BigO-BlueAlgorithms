@@ -42,6 +42,8 @@ class Point {
 
 public class Benefactor {
 
+
+
     private static List<Integer> initNewVisited(int bound) {
         List<Integer> visited = new ArrayList<>();
         for (int i = 0; i < bound; i++) {
@@ -58,10 +60,7 @@ public class Benefactor {
         return levels;
     }
 
-    private static int solution(List<Point> graph, List<Integer> visited, List<Integer> levels, int startPoint) {
-        if (!graph.get(startPoint).hasNeighbors()) {
-            return 0;
-        }
+    private static int[] solution(List<Point> graph, List<Integer> visited, List<Integer> levels, int startPoint) {
         Stack<Point> stack = new Stack<>();
         stack.push(graph.get(startPoint));
         while (!stack.isEmpty()) {
@@ -78,12 +77,14 @@ public class Benefactor {
 
         }
         int maxVal = 0;
-        for (Integer i : levels) {
-            if (i > maxVal) {
-                maxVal = i;
+        int maxPoint = 0;
+        for (int i = 0; i < levels.size(); i++) {
+            if (levels.get(i) > maxVal) {
+                maxVal = levels.get(i);
+                maxPoint = i;
             }
         }
-        return maxVal;
+        return new int[]{maxVal, maxPoint};
     }
 
 
@@ -107,30 +108,23 @@ public class Benefactor {
             for (int i = 0; i < numberOfVertices - 1; i++) {
                 int v1 = Integer.parseInt(sc.next());
                 int v2 = Integer.parseInt(sc.next());
+                v1--; v2--;
                 int weight = Integer.parseInt(sc.next());
                 graph.get(v1).addNeighbor(v2, weight);
                 graph.get(v2).addNeighbor(v1, weight);
             }
 
-            List<Integer> possibleStartPoints = new ArrayList<>();
-            for (int i = 0; i < graph.size(); i++) {
-                if (graph.get(i).hasNeighbors()) {
-                    possibleStartPoints.add(i);
-                }
-            }
+            int startPoint = 1;
 
-            int maxVal = -1;
-            for (Integer startPoint : possibleStartPoints) {
-                visited = initNewVisited(graph.size());
-                levels = initNewLevels(graph.size());
-                visited.set(startPoint, 1);
-                int result = solution(graph, visited, levels, startPoint);
-                if (result > maxVal) {
-                    maxVal = result;
-                }
-            }
+            visited = initNewVisited(graph.size());
+            levels = initNewLevels(graph.size());
+            int nextStartPoint = solution(graph, visited, levels, startPoint)[1];
+            visited = initNewVisited(graph.size());
+            levels = initNewLevels(graph.size());
+            int maxVal = solution(graph, visited, levels, nextStartPoint)[0];
             results[test] = maxVal;
         }
+
         for (int result : results) {
             System.out.println(result);
         }
