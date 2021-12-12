@@ -1,17 +1,15 @@
 package dfs;
 
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class Lakes {
 
     static int[][] visited;
     static final char land = '*';
-    static Set<Integer> lakeInfo;
+    static LinkedList<Integer> lakeInfo;
     static final int[] dR = {-1, 1, 0, 0};
     static final int[] dC = {0, 0, -1, 1};
+    static Map<Integer, List<int[]>> lakePosition;
 
     private static int[] graphIsFull(int[][] visited) {
         for (int i = 0; i < visited.length; i++) {
@@ -26,12 +24,19 @@ public class Lakes {
 
     private static int findLakeSize(int[] startPoint, int numberOfRows, int numberOfColumns) {
         Stack<Integer> stack = new Stack<>();
+        List<int[]> positions = new ArrayList<>();
         stack.push(startPoint[1]);
         stack.push(startPoint[0]);
+        positions.add(new int[]{startPoint[0], startPoint[1]});
         int count = 1;
+        boolean isOnBound = false;
         while (!stack.isEmpty()) {
             int thisX = stack.pop();
             int thisY = stack.pop();
+            if (thisX == 0 | thisX == numberOfRows - 1 | thisY == 0 || thisY == numberOfColumns - 1) {
+                isOnBound = true;
+                break;
+            }
             for (int direction = 0; direction < 4; direction++) {
                 int nextX = thisX + dR[direction];
                 int nextY = thisY + dC[direction];
@@ -42,16 +47,29 @@ public class Lakes {
                         stack.push(nextY);
                         stack.push(nextX);
                         count++;
+                        positions.add(new int[]{nextX,nextY});
                     }
                 }
             }
         }
-        return count;
+        if (!isOnBound) {
+            if (lakePosition.containsKey(count)) {
+                for (int[] position : positions) {
+                    lakePosition.get(count).add(position);
+                }
+            }
+            else {
+                lakePosition.put(count, positions);
+            }
+            return count;
+        }
+        return 0;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        lakeInfo = new HashSet<>();
+        lakeInfo = new LinkedList<>();
+        lakePosition = new HashMap<>();
         int numberOfRows = Integer.parseInt(sc.next());
         int numberOfColumns = Integer.parseInt(sc.next());
         int finalLakes = Integer.parseInt(sc.next());
@@ -64,7 +82,7 @@ public class Lakes {
 
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j < numberOfColumns; j++) {
-                if (map[i][j] == land || i == 0 || j == 0 || i == numberOfRows - 1 || j == numberOfColumns - 1) {
+                if (map[i][j] == land) {
                     visited[i][j] = 1;
                 }
             }
@@ -77,7 +95,27 @@ public class Lakes {
             }
             visited[nextStartPoint[0]][nextStartPoint[1]] = 1;
             int lakeSize = findLakeSize(nextStartPoint, numberOfRows, numberOfColumns);
+            if (lakeSize == 0) {
+                continue;
+            }
             lakeInfo.add(lakeSize);
+        }
+        int count = 0;
+        Collections.sort(lakeInfo);
+        while (lakeInfo.size() != finalLakes) {
+            int lakeSizeToFill = lakeInfo.removeFirst();
+            count += lakeSizeToFill;
+            List<int[]> pointsToFill = lakePosition.get(lakeSizeToFill);
+            for (int[] pointToFill : pointsToFill) {
+                map[pointToFill[0]][pointToFill[1]] = land;
+            }
+        }
+        System.out.println(count);
+        for (char[] row : map) {
+            for (char c : row) {
+                System.out.print(c);
+            }
+            System.out.println();
         }
         sc.close();
     }
