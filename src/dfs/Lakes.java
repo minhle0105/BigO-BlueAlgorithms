@@ -119,9 +119,9 @@ public class Lakes {
             int lakeSizeToFill = lakeInfo.removeFirst();
             count += lakeSizeToFill;
             // lấy toạ độ hồ cần lấp
-            List<int[]> pointsToFill = lakePosition.get(lakeSizeToFill);
-            for (int[] pointToFill : pointsToFill) {
-                // lấp bằng land
+            for (int i = 0; i < lakeSizeToFill; i++) {
+                int[] pointToFill = lakePosition.get(lakeSizeToFill).get(0);
+                lakePosition.get(lakeSizeToFill).remove(0);
                 map[pointToFill[0]][pointToFill[1]] = land;
             }
         }
