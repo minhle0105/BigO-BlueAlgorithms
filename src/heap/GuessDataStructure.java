@@ -7,21 +7,11 @@ public class GuessDataStructure {
     static Queue<Integer> queue;
     static Stack<Integer> stack;
     static PriorityQueue<Integer> heap;
+    static String stackToString;
+    static String heapToString;
+    static String queueToString;
 
     private static String solution (List<List<Integer>> queryDetails) {
-        String stackToString = "";
-        String queueToString = "";
-        String heapToString = "";
-        while (!stack.isEmpty()) {
-            stackToString += stack.pop();
-        }
-        while (!queue.isEmpty()) {
-            queueToString += queue.remove();
-        }
-        while (!heap.isEmpty()) {
-            heapToString += heap.remove();
-        }
-
         String queryToString = "";
 
         for (List<Integer> query : queryDetails) {
@@ -74,6 +64,9 @@ public class GuessDataStructure {
             int numberOfQueries = Integer.parseInt(sc.next());
             List<List<Integer>> queryDetails = new ArrayList<>();
             List<Integer> query;
+            stackToString = "";
+            queueToString = "";
+            heapToString = "";
             queue = new LinkedList<>();
             stack = new Stack<>();
             heap = new PriorityQueue<>((o1, o2) -> o2.compareTo(o1));
@@ -87,6 +80,20 @@ public class GuessDataStructure {
                     queue.add(q2);
                     stack.add(q2);
                     heap.add(q2);
+                }
+                if (q1 == 2) {
+                    if (stack.peek() == q2) {
+                        stack.pop();
+                        stackToString += q2;
+                    }
+                    if (queue.peek() == q2) {
+                        queue.remove();
+                        queueToString += q2;
+                    }
+                    if (heap.peek() == q2) {
+                        heap.remove();
+                        heapToString += q2;
+                    }
                 }
                 queryDetails.add(query);
             }
