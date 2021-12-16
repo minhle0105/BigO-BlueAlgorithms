@@ -12,12 +12,12 @@ public class GuessDataStructure {
     static String queueToString;
 
     private static String solution (List<List<Integer>> queryDetails) {
-        String queryToString = "";
+        StringBuilder queryToString = new StringBuilder();
 
         for (List<Integer> query : queryDetails) {
             if (query.get(0) == 2) {
                 int removedNumber = query.get(1);
-                queryToString += removedNumber;
+                queryToString.append(removedNumber);
             }
         }
 
@@ -27,8 +27,8 @@ public class GuessDataStructure {
             heapToString = heapToString.substring(0, queryToString.length());
         }
 
-        if (queryToString.equals(stackToString)) {
-            if (queryToString.equals(queueToString) | queryToString.equals(heapToString)) {
+        if (queryToString.toString().equals(stackToString)) {
+            if (queryToString.toString().equals(queueToString) | queryToString.toString().equals(heapToString)) {
                 return "not sure";
             }
             else {
@@ -36,8 +36,8 @@ public class GuessDataStructure {
             }
         }
 
-        if (queryToString.equals(heapToString)) {
-            if (queryToString.equals(stackToString) | queryToString.equals(queueToString)) {
+        if (queryToString.toString().equals(heapToString)) {
+            if (queryToString.toString().equals(queueToString)) {
                 return "not sure";
             }
             else {
@@ -45,13 +45,8 @@ public class GuessDataStructure {
             }
         }
 
-        if (queryToString.equals(queueToString)) {
-            if (queryToString.equals(stackToString) | queryToString.equals(heapToString)) {
-                return "not sure";
-            }
-            else {
-                return "queue";
-            }
+        if (queryToString.toString().equals(queueToString)) {
+            return "queue";
         }
 
         return "impossible";
@@ -86,11 +81,11 @@ public class GuessDataStructure {
                         stack.pop();
                         stackToString += q2;
                     }
-                    if (queue.peek() == q2) {
+                    if (!queue.isEmpty() && queue.peek() == q2) {
                         queue.remove();
                         queueToString += q2;
                     }
-                    if (heap.peek() == q2) {
+                    if (!heap.isEmpty() && heap.peek() == q2) {
                         heap.remove();
                         heapToString += q2;
                     }
