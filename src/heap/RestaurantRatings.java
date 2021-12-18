@@ -7,9 +7,7 @@ import java.util.Scanner;
 
 public class RestaurantRatings {
 
-    static PriorityQueue<Integer> heap;
-
-    private static String solution() {
+    private static String solution(PriorityQueue<Integer> heap) {
         int n = heap.size();
         if (n < 3) {
             return "No reviews yet";
@@ -30,7 +28,7 @@ public class RestaurantRatings {
         Scanner sc = new Scanner(System.in);
         int numberOfQueries = Integer.parseInt(sc.next());
         List<String> output = new ArrayList<>();
-        heap = new PriorityQueue<>((o1, o2) -> o2.compareTo(o1));
+        PriorityQueue<Integer> heap = new PriorityQueue<>((o1, o2) -> o2.compareTo(o1));
         for (int i = 0; i < numberOfQueries; i++) {
             int nextQuery = Integer.parseInt(sc.next());
             if (nextQuery == 1) {
@@ -38,7 +36,7 @@ public class RestaurantRatings {
                 heap.add(value);
             }
             else {
-                output.add(solution());
+                output.add(solution(heap));
             }
         }
         for (String s : output) {
