@@ -21,6 +21,8 @@ public class Promotion {
         // 5 5 1 -> 4
         // 5 1 2 -> 4
         Map<Integer, Integer> bills = new HashMap<>();
+        Map<Integer, Integer> shouldBeDeletedFromMin = new HashMap<>();
+        Map<Integer, Integer> shouldBeDeletedFromMax = new HashMap<>();
         for (int i = 0; i < days; i++) {
             int billThisDay = Integer.parseInt(sc.next());
             for (int bill = 0; bill < billThisDay; bill++) {
@@ -34,11 +36,40 @@ public class Promotion {
                 minHeap.add(billValue);
                 maxHeap.add(billValue);
             }
+            if (shouldBeDeletedFromMin.containsKey(maxHeap.peek())) {
+                shouldBeDeletedFromMin.put(maxHeap.peek(), shouldBeDeletedFromMin.get(maxHeap.peek()) + 1);
+            }
+            else {
+                shouldBeDeletedFromMin.put(maxHeap.peek(), 1);
+            }
+
+            if (shouldBeDeletedFromMax.containsKey(minHeap.peek())) {
+                shouldBeDeletedFromMax.put(minHeap.peek(), shouldBeDeletedFromMax.get(minHeap.peek()) + 1);
+            }
+            else {
+                shouldBeDeletedFromMax.put(minHeap.peek(), 1);
+            }
             int maxBill = maxHeap.remove();
             int minBill = minHeap.remove();
-            maxHeap.remove(minBill);
-            minHeap.remove(maxBill);
+            while (!maxHeap.isEmpty() & shouldBeDeletedFromMax.containsKey(maxBill)) {
+                if (shouldBeDeletedFromMax.get(maxBill) == 1) {
+                    maxBill = maxHeap.remove();
+                    shouldBeDeletedFromMax.remove(maxBill);
+                } else {
+                    shouldBeDeletedFromMax.put(maxBill, shouldBeDeletedFromMax.get(maxBill) - 1);
+                }
+            }
+
+            while (!minHeap.isEmpty() & shouldBeDeletedFromMin.containsKey(minBill)) {
+                if (shouldBeDeletedFromMin.get(minBill) == 1) {
+                    minBill = minHeap.remove();
+                    shouldBeDeletedFromMin.remove(minBill);
+                } else {
+                    shouldBeDeletedFromMin.put(minBill, shouldBeDeletedFromMin.get(minBill) - 1);
+                }
+            }
             total += (maxBill - minBill);
+
         }
         System.out.println(total);
         sc.close();
