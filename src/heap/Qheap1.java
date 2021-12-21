@@ -6,7 +6,7 @@ import java.util.*;
 public class Qheap1 {
 
     private static List<Integer> solution(List<List<Integer>> queries) {
-        Set<Integer> hashSet = new HashSet<>();
+        Map<Integer, Integer> hashMap = new HashMap<>();
         List<Integer> result = new ArrayList<>();
         PriorityQueue<Integer> heap = new PriorityQueue<>();
         for (List<Integer> integers : queries) {
@@ -16,11 +16,21 @@ public class Qheap1 {
                 if (q1 == 1) {
                     heap.add(q2);
                 } else if (q1 == 2) {
-                    hashSet.add(q2);
+                    if (hashMap.containsKey(q2)) {
+                        hashMap.put(q2, hashMap.get(q2) + 1);
+                    }
+                    else {
+                        hashMap.put(q2, 1);
+                    }
                 }
             } else {
-                while (!heap.isEmpty() && hashSet.contains(heap.peek())) {
-                    hashSet.remove(heap.remove());
+                while (!heap.isEmpty() && hashMap.containsKey(heap.peek())) {
+                    if (hashMap.get(heap.peek()) == 1) {
+                        hashMap.remove(heap.remove());
+                    }
+                    else {
+                        hashMap.put(heap.peek(), hashMap.get(heap.peek()) - 1);
+                    }
                 }
                 result.add(heap.peek());
             }
