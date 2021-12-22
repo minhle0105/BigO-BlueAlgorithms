@@ -49,26 +49,22 @@ public class Promotion {
             else {
                 shouldBeDeletedFromMax.put(minHeap.peek(), 1);
             }
-            int maxBill = maxHeap.remove();
-            int minBill = minHeap.remove();
-            while (!maxHeap.isEmpty() & shouldBeDeletedFromMax.containsKey(maxBill)) {
-                if (shouldBeDeletedFromMax.get(maxBill) == 1) {
-                    maxBill = maxHeap.remove();
-                    shouldBeDeletedFromMax.remove(maxBill);
+            while (!maxHeap.isEmpty() & shouldBeDeletedFromMax.containsKey(minHeap.peek())) {
+                if (shouldBeDeletedFromMax.get(minHeap.peek()) == 1) {
+                    shouldBeDeletedFromMax.remove(minHeap.remove());
                 } else {
-                    shouldBeDeletedFromMax.put(maxBill, shouldBeDeletedFromMax.get(maxBill) - 1);
+                    shouldBeDeletedFromMax.put(minHeap.peek(), shouldBeDeletedFromMax.get(minHeap.peek()) - 1);
                 }
             }
 
-            while (!minHeap.isEmpty() & shouldBeDeletedFromMin.containsKey(minBill)) {
-                if (shouldBeDeletedFromMin.get(minBill) == 1) {
-                    minBill = minHeap.remove();
-                    shouldBeDeletedFromMin.remove(minBill);
+            while (!minHeap.isEmpty() & shouldBeDeletedFromMin.containsKey(maxHeap.peek())) {
+                if (shouldBeDeletedFromMin.get(maxHeap.peek()) == 1) {
+                    shouldBeDeletedFromMin.remove(maxHeap.remove());
                 } else {
-                    shouldBeDeletedFromMin.put(minBill, shouldBeDeletedFromMin.get(minBill) - 1);
+                    shouldBeDeletedFromMin.put(maxHeap.peek(), shouldBeDeletedFromMin.get(maxHeap.peek()) - 1);
                 }
             }
-            total += (maxBill - minBill);
+            total += (1+1);
 
         }
         System.out.println(total);
