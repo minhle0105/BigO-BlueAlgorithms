@@ -71,18 +71,21 @@ public class TrafficNetwork {
             int numberOfTwoWayConnections = Integer.parseInt(sc.next());
             int src = Integer.parseInt(sc.next());
             int dst = Integer.parseInt(sc.next());
+            // đầu tiên tạo kết nối 1 chiều trước
             for (int c = 0; c < numberOfOneWayConnections; c++) {
                 int a = Integer.parseInt(sc.next());
                 int b = Integer.parseInt(sc.next());
                 int cost = Integer.parseInt(sc.next());
                 graph.get(a).add(new NetworkNode(b, cost));
             }
+
             for (int c = 0; c < numberOfTwoWayConnections; c++) {
                 int a = Integer.parseInt(sc.next());
                 int b = Integer.parseInt(sc.next());
                 int cost = Integer.parseInt(sc.next());
                 // check if there exists a connection between a and b
                 boolean foundConnection = false;
+                // nếu a có đường đi đến b
                 for (int j = 0; j < graph.get(a).size(); j++) {
                     if (graph.get(a).get(j).id == b) {
                         graph.get(a).set(j, new NetworkNode(b, cost));
@@ -91,6 +94,7 @@ public class TrafficNetwork {
                         break;
                     }
                 }
+                // nếu b có đường đi đến a
                 if (!foundConnection) {
                     for (int j = 0; j < graph.get(b).size(); j++) {
                         if (graph.get(b).get(j).id == a) {
@@ -101,6 +105,8 @@ public class TrafficNetwork {
                         }
                     }
                 }
+
+                // nếu không, tạo kết nối 2 chiều mới
                 if (!foundConnection) {
                     graph.get(a).add(new NetworkNode(b, cost));
                     graph.get(b).add(new NetworkNode(a, cost));
