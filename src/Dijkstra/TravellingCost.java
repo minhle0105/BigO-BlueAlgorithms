@@ -16,7 +16,7 @@ class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node o) {
-        return 0;
+        return Integer.compare(this.distance, o.distance);
     }
 }
 
