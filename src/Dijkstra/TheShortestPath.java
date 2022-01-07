@@ -55,7 +55,6 @@ public class TheShortestPath {
                 for (int c = 0; c < connections; c++) {
                     int nextCityId = Integer.parseInt(sc.next());
                     int weight = Integer.parseInt(sc.next());
-                    graph.get(nextCityId).add(new Node(city + 1, weight));
                     graph.get(city + 1).add(new Node(nextCityId, weight));
                 }
             }
