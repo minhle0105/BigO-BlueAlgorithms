@@ -6,7 +6,6 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class TheShortestPath {
-
     static List<List<Node>> graph;
     static int[] distance;
     static int[] path;
