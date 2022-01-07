@@ -68,9 +68,6 @@ public class TheShortestPath {
                 System.out.println(distance[cities.indexOf(destination) + 1]);
             }
         }
-
-
-
         sc.close();
     }
 }
