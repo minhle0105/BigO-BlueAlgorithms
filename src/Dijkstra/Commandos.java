@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Commandos {
 
-    private static int bfs(List<List<Integer>> buildings, int startPoint, int[] specialPoints) {
+    private static List<Integer> bfs(List<List<Integer>> buildings, int startPoint) {
         Queue<Integer> queue = new LinkedList<>();
         int[] visited = new int[buildings.size()];
         List<Integer> levels = new ArrayList<>();
@@ -24,15 +24,7 @@ public class Commandos {
                 }
             }
         }
-        int result = 0;
-        for (int i = 0; i < levels.size(); i++) {
-            if (i != specialPoints[0] && i != specialPoints[1]) {
-                if (levels.get(i) > result) {
-                    result = levels.get(i);
-                }
-            }
-        }
-        return result;
+        return levels;
     }
 
     public static void main(String[] args) {
@@ -43,26 +35,30 @@ public class Commandos {
             List<List<Integer>> buildings = new ArrayList<>();
             int numberOfBuildings = Integer.parseInt(sc.next());
             int numberOfConnections = Integer.parseInt(sc.next());
-            if (numberOfConnections > 1) {
-                for (int i = 0; i < numberOfBuildings; i++) {
-                    buildings.add(new ArrayList<>());
-                }
-                for (int i = 0; i < numberOfConnections; i++) {
-                    int a = Integer.parseInt(sc.next());
-                    int b = Integer.parseInt(sc.next());
-                    buildings.get(a).add(b);
-                    buildings.get(b).add(a);
-                }
-                int startMission = Integer.parseInt(sc.next());
-                int endMission = Integer.parseInt(sc.next());
-                int[] specialPoints = {startMission, endMission};
-                int a = bfs(buildings, startMission, specialPoints);
-                int b = bfs(buildings, endMission, specialPoints);
-                result[test] = a + b;
+            for (int i = 0; i < numberOfBuildings; i++) {
+                buildings.add(new ArrayList<>());
             }
-            else {
-                result[test] = 1;
+            for (int i = 0; i < numberOfConnections; i++) {
+                int a = Integer.parseInt(sc.next());
+                int b = Integer.parseInt(sc.next());
+                buildings.get(a).add(b);
+                buildings.get(b).add(a);
             }
+            int startMission = Integer.parseInt(sc.next());
+            int endMission = Integer.parseInt(sc.next());
+            List<Integer> bfsFromStart = bfs(buildings, startMission);
+            List<Integer> bfsFromDestination = bfs(buildings, endMission);
+            List<Integer> sum = new ArrayList<>();
+            for (int i = 0; i < bfsFromDestination.size(); i++) {
+                sum.add(bfsFromStart.get(i) + bfsFromDestination.get(i));
+            }
+            int r = sum.get(0);
+            for (int i = 1; i < sum.size(); i++) {
+                if (sum.get(i) > r) {
+                    r = sum.get(i);
+                }
+            }
+            result[test] = r;
         }
         for (int i = 0; i < result.length; i++) {
             System.out.println("Case " + (i+1) + ": " + result[i]);
