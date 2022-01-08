@@ -19,19 +19,10 @@ class NetworkNode implements Comparable<NetworkNode> {
 
 public class TrafficNetwork {
 
-    static List<List<NetworkNode>> graph;
-    static int[] distance;
-    static int[] path;
 
-    private static void solution(int startPoint) {
+    private static void solution(List<List<NetworkNode>> graph, int startPoint, int[] distance, int[] path) {
         PriorityQueue<NetworkNode> heap = new PriorityQueue<>();
         int n = graph.size();
-        distance = new int[n];
-        path = new int[n];
-        for (int i = 0; i < n; i++) {
-            distance[i] = Integer.MAX_VALUE;
-            path[i] = -1;
-        }
         heap.add(new NetworkNode(startPoint, 0));
         distance[startPoint] = 0;
         while (!heap.isEmpty()) {
@@ -43,7 +34,7 @@ public class TrafficNetwork {
             }
             for (int i = 0; i < graph.get(currentNodeId).size(); i++) {
                 NetworkNode nextNode = graph.get(currentNodeId).get(i);
-                if (currentDistance + nextNode.distance < distance[nextNode.id]) {
+                if (currentDistance < Integer.MAX_VALUE && currentDistance + nextNode.distance < distance[nextNode.id]) {
                     distance[nextNode.id] = currentDistance + nextNode.distance;
                     heap.add(new NetworkNode(nextNode.id, distance[nextNode.id]));
                     path[nextNode.id] = currentNodeId;
@@ -56,16 +47,23 @@ public class TrafficNetwork {
         Scanner sc = new Scanner(System.in);
         int numberOfTests = Integer.parseInt(sc.next());
         for (int test = 0; test < numberOfTests; test++) {
+            List<List<NetworkNode>> graph;
+            List<List<NetworkNode>> reversedGraph;
             graph = new ArrayList<>();
+            reversedGraph = new ArrayList<>();
+            int[] distance;
+            int[] reversedDistance;
+            int[] path;
             int numberOfNodes = Integer.parseInt(sc.next());
             for (int node = 0; node < numberOfNodes + 1; node++) {
                 graph.add(new ArrayList<>());
+                reversedGraph.add(new ArrayList<>());
             }
             distance = new int[graph.size()];
-            path = new int[graph.size()];
+            reversedDistance = new int[reversedGraph.size()];
             for (int i = 0; i < distance.length; i++) {
                 distance[i] = Integer.MAX_VALUE;
-                path[i] = -1;
+                reversedDistance[i] = Integer.MAX_VALUE;
             }
             int numberOfOneWayConnections = Integer.parseInt(sc.next());
             int numberOfTwoWayConnections = Integer.parseInt(sc.next());
@@ -77,48 +75,37 @@ public class TrafficNetwork {
                 int b = Integer.parseInt(sc.next());
                 int cost = Integer.parseInt(sc.next());
                 graph.get(a).add(new NetworkNode(b, cost));
+                reversedGraph.get(b).add(new NetworkNode(a, cost));
             }
-
+            path = new int[graph.size()];
+            Arrays.fill(path, -1);
+            solution(graph, src, distance, path);
+            path = new int[reversedGraph.size()];
+            Arrays.fill(path, -1);
+            solution(reversedGraph, dst, reversedDistance, path);
+            int originalDistance = distance[dst];
             for (int c = 0; c < numberOfTwoWayConnections; c++) {
                 int a = Integer.parseInt(sc.next());
                 int b = Integer.parseInt(sc.next());
                 int cost = Integer.parseInt(sc.next());
-                // check if there exists a connection between a and b
-                boolean foundConnection = false;
-                // nếu a có đường đi đến b
-                for (int j = 0; j < graph.get(a).size(); j++) {
-                    if (graph.get(a).get(j).id == b) {
-                        graph.get(a).set(j, new NetworkNode(b, cost));
-                        graph.get(b).add(new NetworkNode(a, cost));
-                        foundConnection = true;
-                        break;
-                    }
+                int newDistance1 = Integer.MAX_VALUE;
+                int newDistance2 = Integer.MAX_VALUE;
+                if (distance[a] < Integer.MAX_VALUE && reversedDistance[b] < Integer.MAX_VALUE) {
+                    newDistance1 = distance[a] + reversedDistance[b] + cost;
                 }
-                // nếu b có đường đi đến a
-                if (!foundConnection) {
-                    for (int j = 0; j < graph.get(b).size(); j++) {
-                        if (graph.get(b).get(j).id == a) {
-                            graph.get(b).set(j, new NetworkNode(a, cost));
-                            graph.get(a).add(new NetworkNode(b, cost));
-                            foundConnection = true;
-                            break;
-                        }
-                    }
+                if (distance[b] < Integer.MAX_VALUE && reversedDistance[a] < Integer.MAX_VALUE) {
+                    newDistance2 = distance[b] + reversedDistance[a] + cost;
                 }
-
-                // nếu không, tạo kết nối 2 chiều mới
-                if (!foundConnection) {
-                    graph.get(a).add(new NetworkNode(b, cost));
-                    graph.get(b).add(new NetworkNode(a, cost));
+                int newDistance = Math.min(newDistance1, newDistance2);
+                if (originalDistance > newDistance) {
+                    originalDistance = newDistance;
                 }
-
             }
-            solution(src);
-            if (distance[dst] == Integer.MAX_VALUE) {
+            if (originalDistance == Integer.MAX_VALUE) {
                 System.out.println(-1);
             }
             else {
-                System.out.println(distance[dst]);
+                System.out.println(originalDistance);
             }
         }
         sc.close();
