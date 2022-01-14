@@ -12,6 +12,12 @@ class CityEdge {
         this.target = target;
         this.weight = weight;
     }
+
+    public void swap() {
+        int temp = this.source;
+        this.source = this.target;
+        this.target = temp;
+    }
 }
 
 public class Chicago {
@@ -29,6 +35,23 @@ public class Chicago {
                 }
             }
         }
+
+        for (CityEdge edge : graph) {
+            edge.swap();
+        }
+
+        for (int i = 1; i <= numberOfVertice - 1; i++) {
+            for (CityEdge edge : graph) {
+                int u = edge.source;
+                int v = edge.target;
+                double w = edge.weight;
+                if (distance[u] != Integer.MAX_VALUE && distance[u] * w < distance[v]) {
+                    distance[v] = distance[u] * w;
+                    path[v] = u;
+                }
+            }
+        }
+
         for (CityEdge edge : graph) {
             int u = edge.source;
             int v = edge.target;

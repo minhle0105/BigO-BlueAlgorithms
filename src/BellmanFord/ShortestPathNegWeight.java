@@ -35,12 +35,14 @@ public class ShortestPathNegWeight {
                 int v = edge.target;
                 int w = edge.weight;
                 if (distance[u] != Integer.MAX_VALUE && distance[u] + w < distance[v]) {
+                    distance[v] = distance[u] + w;
                     possibleNegative.add(u);
+                    possibleNegative.add(v);
                 }
             }
         }
 
-        return !(possibleNegative.size() > 0);
+        return possibleNegative.size() == 0;
 
     }
 
