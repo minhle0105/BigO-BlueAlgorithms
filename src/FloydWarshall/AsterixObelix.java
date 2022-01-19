@@ -8,7 +8,7 @@ public class AsterixObelix {
 
     final static int INF = 1000000000;
 
-    public static boolean floydWarshall(int[][] graph, int[][] dist, int[][] path) {
+    public static boolean floydWarshall(int[][] graph, int[][] dist, int[][] path, int[][] maxCostAtEachPoint) {
         int V = graph.length;
         for (int i = 0; i < V; i++) {
             for (int j = 0; j < V; j++) {
@@ -21,12 +21,24 @@ public class AsterixObelix {
                 }
             }
         }
-        for (int k = 0; k < V; k++) {
-            for (int i = 0; i < V; i++) {
-                for (int j = 0; j < V; j++) {
-                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+        for (int k = 1; k < V; k++) {
+            for (int i = 1; i < V; i++) {
+                for (int j = 1; j < V; j++) {
+                    if ((dist[i][k] + dist[k][j]) + Math.max(maxCostAtEachPoint[i][k],maxCostAtEachPoint[k][j]) < dist[i][j] + maxCostAtEachPoint[i][j]) {
                         dist[i][j] = dist[i][k] + dist[k][j];
                         path[i][j] = path[k][j];
+                        maxCostAtEachPoint[i][j] = Math.max(maxCostAtEachPoint[i][k],maxCostAtEachPoint[k][j]);
+                    }
+                }
+            }
+        }
+        for (int k = 1; k < V; k++) {
+            for (int i = 1; i < V; i++) {
+                for (int j = 1; j < V; j++) {
+                    if ((dist[i][k] + dist[k][j]) + Math.max(maxCostAtEachPoint[i][k],maxCostAtEachPoint[k][j]) < dist[i][j] + maxCostAtEachPoint[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        path[i][j] = path[k][j];
+                        maxCostAtEachPoint[i][j] = Math.max(maxCostAtEachPoint[i][k],maxCostAtEachPoint[k][j]);
                     }
                 }
             }
@@ -52,10 +64,17 @@ public class AsterixObelix {
                 break;
             }
             int[] partyCost = new int[C+1];
+            int[][] maxCostAtEachPoint = new int[C+1][C+1];
             for (int i = 0; i < C; i++) {
                 int cost = Integer.parseInt(sc.next());
                 partyCost[i+1] = cost;
             }
+            for (int i = 0; i < C+1; i++) {
+                for (int j = 0; j < C+1; j++) {
+                    maxCostAtEachPoint[i][j] = Math.max(partyCost[i], partyCost[j]);
+                }
+            }
+
             int[][] graph = new int[C+1][C+1];
             for (int i = 1; i < R+1; i++) {
                 int a = Integer.parseInt(sc.next());
@@ -73,7 +92,7 @@ public class AsterixObelix {
             }
             int[][] distance = new int[C+1][C+1];
             int[][] path = new int[C+1][C+1];
-            floydWarshall(graph, distance, path);
+            floydWarshall(graph, distance, path, maxCostAtEachPoint);
             for (int i = 0; i < Q; i++) {
                 int src = Integer.parseInt(sc.next());
                 int dst = Integer.parseInt(sc.next());
@@ -81,13 +100,7 @@ public class AsterixObelix {
                     result.add(-1);
                 }
                 else {
-                    int maxCost = -1;
-                    for (int j = src; j <= dst; j++) {
-                        if (partyCost[j] > maxCost) {
-                            maxCost = partyCost[j];
-                        }
-                    }
-                    result.add(distance[src][dst] + maxCost);
+                    result.add(distance[src][dst] + maxCostAtEachPoint[src][dst]);
                 }
             }
             results.add(result);
