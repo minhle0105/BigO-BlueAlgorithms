@@ -23,7 +23,7 @@ public class Professor {
         for (int k = 0; k < V; k++) {
             for (int i = 0; i < V; i++) {
                 for (int j = 0; j < V; j++) {
-                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    if (dist[i][k] < Integer.MAX_VALUE && dist[k][j] < Integer.MAX_VALUE && dist[i][k] + dist[k][j] < dist[i][j]) {
                         dist[i][j] = dist[i][k] + dist[k][j];
                         path[i][j] = path[k][j];
                     }
@@ -46,37 +46,6 @@ public class Professor {
             if (numberOfCities == 0) break;
             int[][] graphYoung = new int[26][26];
             int[][] graphOld = new int[26][26];
-            for (int i = 0; i < numberOfCities; i++) {
-                String oldOrYoung = sc.next();
-                String oneWayOrTwoWay = sc.next();
-                String src = sc.next();
-                String dst = sc.next();
-                int cost = Integer.parseInt(sc.next());
-                int srcAscii = (int) (src.charAt(0) - 'A');
-                int dstAscii = (int) (dst.charAt(0) - 'A');
-                if (oldOrYoung.equals("Y")) {
-                    if (oneWayOrTwoWay.equals("U")) {
-                        graphYoung[srcAscii][dstAscii] = cost;
-                    }
-                    else {
-                        graphYoung[srcAscii][dstAscii] = cost;
-                        graphYoung[dstAscii][srcAscii] = cost;
-                    }
-                }
-                else {
-                    if (oneWayOrTwoWay.equals("U")) {
-                        graphOld[srcAscii][dstAscii] = cost;
-                    }
-                    else {
-                        graphOld[srcAscii][dstAscii] = cost;
-                        graphOld[dstAscii][srcAscii] = cost;
-                    }
-                }
-            }
-            int[][] distanceYoung = new int[26][26];
-            int[][] distanceOld = new int[26][26];
-            int[][] pathYoung = new int[26][26];
-            int[][] pathOld = new int[26][26];
             for (int i = 0; i < graphOld.length; i++) {
                 for (int j = 0; j < graphOld[i].length; j++) {
                     if (i != j && graphOld[i][j] == 0) {
@@ -92,11 +61,54 @@ public class Professor {
                     }
                 }
             }
+            for (int i = 0; i < numberOfCities; i++) {
+                String oldOrYoung = sc.next();
+                String oneWayOrTwoWay = sc.next();
+                String src = sc.next();
+                String dst = sc.next();
+                int cost = Integer.parseInt(sc.next());
+                int srcAscii = (int) (src.charAt(0) - 'A');
+                int dstAscii = (int) (dst.charAt(0) - 'A');
+                if (oldOrYoung.equals("Y")) {
+                    if (oneWayOrTwoWay.equals("U")) {
+                        if (cost < graphYoung[srcAscii][dstAscii]) {
+                            graphYoung[srcAscii][dstAscii] = cost;
+                        }
+                    }
+                    else {
+                        if (cost < graphYoung[srcAscii][dstAscii]) {
+                            graphYoung[srcAscii][dstAscii] = cost;
+                        }
+                        if (cost < graphYoung[dstAscii][srcAscii]) {
+                            graphYoung[dstAscii][srcAscii] = cost;
+                        }
+                    }
+                }
+                else {
+                    if (oneWayOrTwoWay.equals("U")) {
+                        if (cost < graphOld[srcAscii][dstAscii]) {
+                            graphOld[srcAscii][dstAscii] = cost;
+                        }
+
+                    }
+                    else {
+                        if (cost < graphOld[srcAscii][dstAscii]) {
+                            graphOld[srcAscii][dstAscii] = cost;
+                        }
+                        if (cost < graphOld[dstAscii][srcAscii]) {
+                            graphOld[dstAscii][srcAscii] = cost;
+                        }
+                    }
+                }
+            }
+            int[][] distanceYoung = new int[26][26];
+            int[][] distanceOld = new int[26][26];
+            int[][] pathYoung = new int[26][26];
+            int[][] pathOld = new int[26][26];
 
             floydWarshall(graphOld, distanceOld, pathOld);
             floydWarshall(graphYoung, distanceYoung, pathYoung);
             int smallestValue = Integer.MAX_VALUE;
-            String dst = "";
             String startYoung = sc.next();
             String startOld = sc.next();
 
@@ -105,11 +117,23 @@ public class Professor {
                         distanceYoung[(int) (startYoung.charAt(0) - 'A')][i] < Integer.MAX_VALUE &&
                         distanceOld[(int) (startOld.charAt(0) - 'A')][i] + distanceYoung[(int) (startYoung.charAt(0) - 'A')][i] < smallestValue) {
                     smallestValue = distanceOld[(int) (startOld.charAt(0) - 'A')][i] + distanceYoung[(int) (startYoung.charAt(0) - 'A')][i];
-                    dst = String.valueOf((char) (i + 'A'));
                 }
             }
-            if (!dst.equals("")) {
-                System.out.println(smallestValue + " " + dst);
+            if (smallestValue != Integer.MAX_VALUE) {
+                List<String> dsts = new ArrayList<>();
+                for (int i = 0; i < distanceOld.length; i++) {
+                    if (distanceOld[(int) (startOld.charAt(0) - 'A')][i] < Integer.MAX_VALUE &&
+                            distanceYoung[(int) (startYoung.charAt(0) - 'A')][i] < Integer.MAX_VALUE &&
+                            distanceOld[(int) (startOld.charAt(0) - 'A')][i] + distanceYoung[(int) (startYoung.charAt(0) - 'A')][i] == smallestValue) {
+                        String dst = String.valueOf((char) (i + 'A'));
+                        dsts.add(dst);
+                    }
+                }
+                System.out.print(smallestValue + " ");
+                for (String dst : dsts) {
+                    System.out.print(dst + " ");
+                }
+                System.out.println();
             }
             else {
                 System.out.println("You will never meet.");
