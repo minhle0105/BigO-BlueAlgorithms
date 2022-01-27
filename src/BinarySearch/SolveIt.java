@@ -1,6 +1,5 @@
 package BinarySearch;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +13,17 @@ public class SolveIt {
     private static double solveRoot(int p, int q, int r, int s, int t, int u) {
         double left = 0;
         double right = 1;
-        while (left <= right) {
+        while (left < right) {
             double mid = (left + right) / 2;
             double root = isRoot(p, q, r, s, t, u, mid);
-            if (Math.abs(root - 0) < 0.001) {
+            if (Math.abs(root - 0) < 0.000000001) {
                 return mid;
             }
             else if (root > 0) {
-                left = mid + 0.0001;
+                left = mid;
             }
             else {
-                right = mid - 0.0001;
+                right = mid;
             }
         }
         return -1;
