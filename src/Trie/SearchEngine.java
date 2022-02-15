@@ -15,12 +15,12 @@ class Node {
     }
 }
 
-class Trie {
+class TTrie {
     public static final int MAX = 26;
     private Node root;
     Map<String, Integer> priorities;
 
-    public Trie(Map<String, Integer> priorities) {
+    public TTrie(Map<String, Integer> priorities) {
         this.root = new Node();
         this.priorities = priorities;
     }
@@ -73,7 +73,7 @@ class Trie {
 public class SearchEngine {
 
     private static int[] solution(List<String> words, Map<String, Integer> map, List<String> queries) {
-        Trie trie = new Trie(map);
+        TTrie trie = new TTrie(map);
         for (String word : words) {
             trie.addWord(word);
         }
