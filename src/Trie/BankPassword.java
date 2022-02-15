@@ -68,7 +68,6 @@ class BankTrie {
 public class BankPassword {
 
     private static boolean check(BankTrie bankTrie, String[] passwords) {
-        Arrays.sort(passwords, (a, b)->Integer.compare(a.length(), b.length()));
         for (String password : passwords){
             if (bankTrie.containsASubWord(password)) {
                 return true;
