@@ -17,33 +17,38 @@ class DNATrie {
         int ch;
         DNANode temp = root;
         for (int i = 0; i < s.length(); i++) {
-            ch = s.charAt(i) - 'a';
+            ch = s.charAt(i) - 'A';
             if (temp.child[ch] == null) {
                 DNANode x = new DNANode();
                 temp.child[ch] = x;
                 temp.child[ch].distanceFromRoot = temp.distanceFromRoot + 1;
             }
             temp = temp.child[ch];
+            temp.wordThatHasThisPrefix++;
         }
         temp.countWord++;
     }
 
-    public boolean findWord(String s) {
-        int ch;
-        DNANode temp = root;
-        for (int i = 0; i < s.length(); i++) {
-            ch = s.charAt(i) - 'a';
-            if (temp.child[ch] == null) {
-                return false;
-            }
-            temp = temp.child[ch];
-        }
-        return temp.countWord > 0;
-    }
-
-    public void dfs() {
+    public int dfs() {
         Stack<DNANode> stack = new Stack<>();
-
+        stack.add(root);
+        root.isVisited = true;
+        int max = root.wordThatHasThisPrefix * root.distanceFromRoot;
+        while (!stack.isEmpty()) {
+            DNANode thisNode = stack.pop();
+            for (int i = 0; i < 26; i++) {
+                DNANode nextNode = thisNode.child[i];
+                if (nextNode != null && !nextNode.isVisited) {
+                    int val = nextNode.wordThatHasThisPrefix * nextNode.distanceFromRoot;
+                    if (val > max) {
+                        max = val;
+                    }
+                    nextNode.isVisited = true;
+                    stack.add(nextNode);
+                }
+            }
+        }
+        return max;
     }
 }
 
@@ -53,12 +58,14 @@ class DNANode {
     public int countWord;
     public int distanceFromRoot;
     public boolean isVisited;
+    public int wordThatHasThisPrefix;
 
     public DNANode() {
         this.countWord = 0;
         this.child = new DNANode[MAX];
         this.distanceFromRoot = 0;
         this.isVisited = false;
+        this.wordThatHasThisPrefix = 0;
     }
 }
 
@@ -78,7 +85,8 @@ public class DNAPrefix {
             for (String s : strs) {
                 trie.addWord(s);
             }
-
+            int max = trie.dfs();
+            results[i] = max;
         }
         for (int i = 0; i < numberOfTest; i++) {
             System.out.println("Case " + (i + 1) + ": " + results[i]);
