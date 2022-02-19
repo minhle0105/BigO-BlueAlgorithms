@@ -2,17 +2,17 @@ package Prim;
 
 import java.util.*;
 
-class Node implements Comparable<Node> {
+class MinSpanningTreeNode implements Comparable<MinSpanningTreeNode> {
     long id;
     long dist;
 
-    public Node(long id, long dist) {
+    public MinSpanningTreeNode(long id, long dist) {
         this.id = id;
         this.dist = dist;
     }
 
     @Override
-    public int compareTo(Node o) {
+    public int compareTo(MinSpanningTreeNode o) {
         return Long.compare(this.dist, o.dist);
     }
 }
@@ -24,8 +24,8 @@ public class MinSpanningTree {
     private static boolean[] visited;
 
 
-    private static void prims(int src, List<List<Node>> graph) {
-        PriorityQueue<Node> heap = new PriorityQueue<>();
+    private static void prims(int src, List<List<MinSpanningTreeNode>> graph) {
+        PriorityQueue<MinSpanningTreeNode> heap = new PriorityQueue<>();
         int n = graph.size() + 1;
         dist = new long[n];
         path = new long[n];
@@ -33,14 +33,14 @@ public class MinSpanningTree {
         Arrays.fill(dist, Integer.MAX_VALUE);
         Arrays.fill(path, -1);
         Arrays.fill(visited, false);
-        heap.add(new Node(src, 0));
+        heap.add(new MinSpanningTreeNode(src, 0));
         dist[src] = 0;
         while (!heap.isEmpty()) {
-            Node top = heap.remove();
+            MinSpanningTreeNode top = heap.remove();
             long u = top.id;
             visited[(int) u] = true;
             for (int i = 0; i < graph.get((int) u).size(); i++) {
-                Node neighbor = graph.get((int) u).get(i);
+                MinSpanningTreeNode neighbor = graph.get((int) u).get(i);
                 long v = neighbor.id;
                 long cost = neighbor.dist;
 //                if (dist[u] != cost) {
@@ -48,7 +48,7 @@ public class MinSpanningTree {
 //                }
                 if (!visited[(int) v] && cost < dist[(int) v]) {
                     dist[(int) v] = cost;
-                    heap.add(new Node(v, cost));
+                    heap.add(new MinSpanningTreeNode(v, cost));
                     path[(int) v] = u;
                 }
             }
@@ -59,7 +59,7 @@ public class MinSpanningTree {
         Scanner sc = new Scanner(System.in);
         int n = Integer.parseInt(sc.next());
         int m = Integer.parseInt(sc.next());
-        List<List<Node>> graph = new ArrayList<>();
+        List<List<MinSpanningTreeNode>> graph = new ArrayList<>();
         for (int i = 0; i < n + 1; i++) {
             graph.add(new ArrayList<>());
         }
@@ -68,8 +68,8 @@ public class MinSpanningTree {
             int u = Integer.parseInt(sc.next());
             int v = Integer.parseInt(sc.next());
             int dist = Integer.parseInt(sc.next());
-            graph.get(u).add(new Node(v, dist));
-            graph.get(v).add(new Node(u, dist));
+            graph.get(u).add(new MinSpanningTreeNode(v, dist));
+            graph.get(v).add(new MinSpanningTreeNode(u, dist));
         }
         prims(1, graph);
         long result = 0;
