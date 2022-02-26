@@ -1,6 +1,7 @@
 package Prim;
 
 import java.util.*;
+import java.lang.*;
 
 class Building implements Comparable<Building> {
     int id;
@@ -21,14 +22,22 @@ class Building implements Comparable<Building> {
         this.dist = dist;
     }
 
+    public Building(Building b) {
+        this.id = b.id;
+        this.x = b.x;
+        this.y = b.y;
+        this.dist = b.dist;
+    }
+
     @Override
     public int compareTo(Building o) {
         return Double.compare(this.dist, o.dist);
     }
 }
 
-public class ConnectCampus {
-
+/* Name of the class has to be "Main" only if the class is public. */
+class s
+{
     private static double[] dist;
     private static long[] path;
     private static boolean[] visited;
@@ -63,53 +72,61 @@ public class ConnectCampus {
 
 
     private static double getDistance(Building b1, Building b2) {
-        double a = Math.pow(b1.x, 2) - Math.pow(b2.x, 2);
-        double b = Math.pow(b1.y, 2) - Math.pow(b2.y, 2);
+        // Ở đây hôm bữa dùng nhầm cái khoảng cách
+        double a = Math.pow(b1.x - b2.x, 2);
+        double b = Math.pow(b1.y - b2.y, 2);
         return Math.sqrt(a + b);
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<List<Building>> graph = new ArrayList<>();
-        List<Building> buildings = new ArrayList<>();
-        int n = Integer.parseInt(sc.next());
-        for (int i = 0; i < n; i++) {
-            int x = Integer.parseInt(sc.next());
-            int y = Integer.parseInt(sc.next());
-            Building building = new Building(i + 1, x, y);
-            buildings.add(building);
-        }
 
-        for (int i = 0; i < buildings.size() + 1; i++) {
-            graph.add(new ArrayList<>());
-        }
-
-        for (int i = 0; i < buildings.size() - 1; i++) {
-            for (int j = i + 1; j < buildings.size(); j++) {
-                Building b1 = buildings.get(i);
-                Building b2 = buildings.get(j);
-                double distance = getDistance(b1, b2);
-                b1.dist = distance;
-                b2.dist = distance;
-                graph.get(b1.id).add(b2);
-                graph.get(b2.id).add(b1);
+        while(sc.hasNext()) {
+            List<List<Building>> graph = new ArrayList<>();
+            List<Building> buildings = new ArrayList<>();
+            int n = Integer.parseInt(sc.next());
+            for (int i = 0; i < n; i++) {
+                int x = Integer.parseInt(sc.next());
+                int y = Integer.parseInt(sc.next());
+                Building building = new Building(i + 1, x, y);
+                buildings.add(building);
             }
-        }
 
-        int m = Integer.parseInt(sc.next());
-        for (int i = 0; i < m; i++) {
-            int a = Integer.parseInt(sc.next());
-            int b = Integer.parseInt(sc.next());
-            graph.get(a).add(new Building(b, 0, 0, 0));
-            graph.get(b).add(new Building(a, 0, 0, 0));
-        }
-        prims(1, graph);
-        double result = 0;
-        for (int i = 1; i < dist.length; i++) {
-            result += dist[i];
-        }
-        System.out.println(result);
+            for (int i = 0; i < buildings.size() + 1; i++) {
+                graph.add(new ArrayList<>());
+            }
 
+            for (int i = 0; i < buildings.size(); i++) {
+                for (int j = i + 1; j < buildings.size(); j++) {
+                    // Em new luôn một building mới ở đây do nếu không new
+                    // thì cái b1 và b2 nó lại chỉ là reference của buildings.get(i)
+                    // và buildings.get(j). Khi mình thay đổi b1.dist và b2.dist thì nó
+                    // sẽ đổi luôn ở trong cái mảng buildings
+                    Building b1 = new Building(buildings.get(i));
+                    Building b2 = new Building(buildings.get(j));
+                    double distance = getDistance(b1, b2);
+                    b1.dist = distance;
+                    b2.dist = distance;
+                    graph.get(b1.id).add(b2);
+                    graph.get(b2.id).add(b1);
+                }
+            }
+
+            int m = Integer.parseInt(sc.next());
+            for (int i = 0; i < m; i++) {
+                int a = Integer.parseInt(sc.next());
+                int b = Integer.parseInt(sc.next());
+                graph.get(a).add(new Building(b, 0, 0, 0));
+                graph.get(b).add(new Building(a, 0, 0, 0));
+            }
+            prims(1, graph);
+            double result = 0;
+            for (int i = 1; i < dist.length; i++) {
+                result += dist[i];
+            }
+            System.out.format("%.2f", result);
+            System.out.println();
+        }
         sc.close();
     }
 }
