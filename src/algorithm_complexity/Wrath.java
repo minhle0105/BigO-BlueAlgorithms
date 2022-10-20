@@ -7,25 +7,35 @@ import java.util.*;
 
 public class Wrath {
     private static int solution(List<Integer> list) {
-        int firstPointer = list.size() - 1;
-        int secondPointer = firstPointer - 1;
+        int currentPerson = list.size() - 1;
+        int personKilled = currentPerson - 1;
         List<Integer> isKilled = new ArrayList<>();
-        while (firstPointer >= 0) {
-            while (secondPointer >= 0) {
-                int j = secondPointer + 1;
-                int i = firstPointer + 1;
-                int Li = list.get(firstPointer);
-                boolean canKill1 = j < i;
-                boolean canKill2 = j >= i - Li;
-                if (canKill1 && canKill2) {
-                    isKilled.add(secondPointer);
+
+        // đề bài là khi chuông reo, tất cả mọi người cùng chém 1 lúc --> mình phải xét từng người 1 xem chém
+        // được mấy người (nếu không sẽ bị sót)
+        // ví dụ, phải xét người 9 chém được mấy
+        // người 8 chém được mấy
+        // người 7 chém được mấy
+        // ...
+        // về tới người 0
+        while (currentPerson >= 0) {
+            while (personKilled >= 0) {
+                int j = personKilled + 1;
+                int i = currentPerson + 1;
+                int Li = list.get(currentPerson);
+                boolean iStandingBehindJ = j < i;
+                boolean crawIsLongEnough = j >= i - Li;
+                if (iStandingBehindJ && crawIsLongEnough) {
+                    isKilled.add(personKilled);
                 }
-                if (!canKill2) {
+                // nếu tới đây điều kiện này false --> móng vuốt ko đủ dài, chắc chắn sẽ không chém
+                // được từ đây nữa nên break luôn
+                if (!crawIsLongEnough) {
                     break;
                 }
-                secondPointer--;
+                personKilled--;
             }
-            firstPointer--;
+            currentPerson--;
         }
         return list.size() - isKilled.size();
     }

@@ -46,7 +46,6 @@ public class SuffixStructures {
         // both
         // hot -> array
         // oth -> automaton
-        boolean isBoth = false;
         int index = 0;
         for (int i = 0; i< s2.length(); i++) {
             String s1Clone = s1.substring(index); // both oth th h
@@ -54,13 +53,8 @@ public class SuffixStructures {
                 index = s1Clone.indexOf(s2.charAt(i)) + 1;
             }
             else {
-                isBoth = true;
+                return "both";
             }
-        }
-
-
-        if (isBoth) {
-            return "both";
         }
         return "automaton";
 
