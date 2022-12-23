@@ -12,7 +12,12 @@ public class Array {
 
         // tạo array chứa kết quả, tạm thời để là [-1,-1]
         int[] result = new int[]{-1, -1};
+
+        // mục đích của firstPointer là tìm điểm gần secondPointer nhất thoả mãn điều kiện
+        // vì đề bài là tìm đoạn tối thiểu
         int firstPointer = -1;
+
+        // mục đích của secondPointer là tìm điểm đầu tiên thoả mãn điều kiện
         int secondPointer = -1;
         int maxLength = list.size();
 
@@ -33,7 +38,7 @@ public class Array {
                 hashMap.put(list.get(i), hashMap.get(list.get(i)) + 1);
             }
             // nếu đã chạm k phần tử rồi thì đặt mốc secondPointer tại đây
-            // (secondPointer là điểm đánh dấu tại nơi cuối cùng thoả mãn điều kiện
+            // (secondPointer là điểm đánh dấu tại nơi đầu tiên thoả mãn điều kiện
             // nhỏ hơn k phần tử phân biệt)
             // tại điểm này thoả mãn điều kiện đề bài là k phần tử phân biệt rồi nên break
             else {
