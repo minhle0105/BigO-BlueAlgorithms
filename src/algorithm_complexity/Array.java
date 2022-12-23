@@ -19,13 +19,23 @@ public class Array {
         HashMap<Integer, Integer> hashMap = new HashMap<>();
         hashMap.put(list.get(0), 1);
 
+        // cơ bản là vòng lặp này để đếm tần suất từng phần tử
+        // với hashmap size là số phần tử phân biệt
         for (int i = 1; i < list.size(); i++) {
+            // nếu gặp phần tử mới
+            // --> thêm vào map
             if (!hashMap.containsKey(list.get(i))) {
                 hashMap.put(list.get(i), 1);
             }
+            // nếu thêm vào mà vẫn chưa đạt tới k phần tử
+            // -> tăng đếm lên 1 (tức là phần tử đang xem vẫn valid)
             if (hashMap.size() < k) {
                 hashMap.put(list.get(i), hashMap.get(list.get(i)) + 1);
             }
+            // nếu đã chạm k phần tử rồi thì đặt mốc secondPointer tại đây
+            // (secondPointer là điểm đánh dấu tại nơi cuối cùng thoả mãn điều kiện
+            // nhỏ hơn k phần tử phân biệt)
+            // tại điểm này thoả mãn điều kiện đề bài là k phần tử phân biệt rồi nên break
             else {
                 secondPointer = i;
                 break;
