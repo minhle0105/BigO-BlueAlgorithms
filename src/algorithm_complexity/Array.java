@@ -49,6 +49,8 @@ public class Array {
         if (secondPointer == -1) {
             return new int[] {-1, -1};
         }
+
+        // tới chỗ này ý tưởng hệt như lúc trên, nhưng đi ngược lại từ secondPointer về
         hashMap = new HashMap<>();
         hashMap.put(list.get(secondPointer), 1);
         for (int i = secondPointer - 1; i >= 0; i--) {
@@ -63,6 +65,8 @@ public class Array {
                 break;
             }
         }
+
+        // vì để 1-based index
         result[0] = firstPointer+1;
         result[1] = secondPointer + 1;
 
