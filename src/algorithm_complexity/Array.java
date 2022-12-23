@@ -5,10 +5,12 @@ import java.util.*;
 public class Array {
     private static int[] solution(List<Integer> list, int k) {
 
+        // nếu k = 1 thì khoảng ngắn nhất có k số phân biệt là [1,1]
         if (k == 1) {
             return new int[]{1,1};
         }
 
+        // tạo array chứa kết quả, tạm thời để là [-1,-1]
         int[] result = new int[]{-1, -1};
         int firstPointer = -1;
         int secondPointer = -1;
@@ -29,6 +31,11 @@ public class Array {
                 break;
             }
         }
+
+        // nếu đi hết 1 vòng vẫn mà secondPointer vẫn là -1 thì
+        // tức là else block trong vòng lặp không được execute
+        // tức là không có đoạn nào đạt tới k phần tử phân biệt (điều kiện của if hashmap.size() >= k)
+        // tức là không có đáp án
         if (secondPointer == -1) {
             return new int[] {-1, -1};
         }
